@@ -1,0 +1,34 @@
+.projects-page {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.project-list {}
+
+.project-list-entry {
+	cursor: pointer;
+	padding: 1rem;
+	border-radius: 1rem;
+}
+
+.project-list-entry:hover {
+	background-color: skyblue;
+}
+
+.modal-action-row {
+	margin-top: 2rem;
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.modal-action {
+	padding: 1rem;
+	font-weight: bold;
+}
+
+.modal-action-delete {
+	background-color: var(--danger-background);
+	color: var(--danger-text);
+}

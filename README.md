@@ -1,8 +1,21 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+Dexie reference
+https://dexie.org/docs/API-Reference#add-items
 
-First, run the development server:
+
+TODO:
+support adding images to npc objects
+flag "orphan" items whose project has been removed
+support change item's project and copy item to other project
+
+DONE:
+show npc form values in editable text inputs
+click npc from list to show it in a form. support delete
+fix the screen width problem
+filter displayed lists to show only items that pertain to the current project
+allow a toggle for this feature
+
+
 
 ```bash
 npm run dev

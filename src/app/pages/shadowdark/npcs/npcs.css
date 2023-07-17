@@ -1,0 +1,35 @@
+.npc-form {
+	border: 1px solid gray;
+	padding: 1rem;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.npc-form-button-row {
+	display: flex;
+	gap: 1rem;
+}
+
+.npc-line {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+
+}
+
+.ai-prompt-content {
+	border: 1px solid gray;
+	padding: 1rem;
+	background-color: white;
+}
+
+.npc-list-item {
+	padding: 0.5rem;
+	cursor: pointer;
+}
+
+.npc-list-item:hover {
+	font-style: italic;
+	color: blue;
+}

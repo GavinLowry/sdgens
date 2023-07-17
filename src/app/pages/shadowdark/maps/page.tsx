@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react'
 import MapView, {MapData, Point} from '../../../utils/mapview'
 import {hexAreaPoints} from '../../../utils/hex'
-import {Roll} from '../../../utils/random'
+import {roll} from '../../../utils/random'
 
 /*
 Shadowdark p. 130
@@ -23,7 +23,7 @@ export default function Maps() {
         const points = hexAreaPoints(3);
         const roomPoints = [];
         for (let i=0; i<roomCount; ++i) {
-            const index = Roll(0, points.length - 1);
+            const index = roll(0, points.length - 1);
             const p = points.splice(index,1)[0];
             roomPoints.push(p);
         }

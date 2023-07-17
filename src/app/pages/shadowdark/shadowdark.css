@@ -4,6 +4,7 @@
 }
 
 .sd-left-nav {
+    flex: 0 0 100px;
     background-color: white;
     padding-top: 1rem;
     display: flex;
@@ -12,10 +13,30 @@
     min-height: 100vh;
 }
 
+.sd-right-column {
+    flex: 1;
+}
+
 .sd-left-nav a {
     padding: 1rem;
 }
 
 .sd-left-nav a:hover {
     background-color:lightskyblue;
+}
+
+.sd-status-bar {
+    padding: 1rem;
+    background-color: #eee;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.sd-status-bar .switch {
+    margin-left: 1rem;
+}
+
+.sd-content {
+    min-height: 100vh;
 }
