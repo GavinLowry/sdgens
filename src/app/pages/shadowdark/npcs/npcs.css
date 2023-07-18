@@ -33,3 +33,8 @@
 	font-style: italic;
 	color: blue;
 }
+
+.npc-portrait img {
+	max-width: 300px;
+	max-height: 300px;
+}
