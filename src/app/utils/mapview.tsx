@@ -85,6 +85,16 @@ export default function MapView({mapData, onConnect}: MapViewApps) {
             const room = getClickedRoom(offsetX, offsetY);
             clickRoom(room);
         });
+        document.addEventListener('keypress', (event) => {
+            const name = event.key;
+            const code = event.code;
+            console.log({name,code})
+            if (name === 'c') {
+                if (selectedRoomRef.current) {
+                    onConnectCommand();
+                }
+            }
+        });
         draw();
     }, [mapData, ctx, canvas])
 
@@ -208,6 +218,7 @@ export default function MapView({mapData, onConnect}: MapViewApps) {
     }
 
     function onConnectCommand() {
+        console.log('onConnectCommand')
         setCommand(commands.CONNECT);
     }
 
