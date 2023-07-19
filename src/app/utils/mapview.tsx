@@ -21,9 +21,10 @@ export interface RoomData {
 }
 
 export interface MapData {
+    projectId: number;
+    rooms: RoomData[];
     id?: number;
     name?: string;
-    rooms: RoomData[];
 }
 
 interface ScreenPoint {
@@ -98,7 +99,7 @@ export default function MapView({mapData, onConnect}: MapViewApps) {
                     onConnect(selectedRoomRef.current, room);
                 }
                 setCommand('');
-                setSelectedRoom(undefined);
+                setSelectedRoom(room);
             } else {
                 setSelectedRoom(room);
             }

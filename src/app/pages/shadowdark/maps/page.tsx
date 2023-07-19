@@ -1,6 +1,6 @@
 'use client'
 
-import {MouseEventHandler, useContext, useEffect, useState, SyntheticEvent} from 'react'
+import {useContext, useEffect, useState, SyntheticEvent} from 'react'
 import {mapTable} from "../../../database/database.config";
 import MapView, {MapData, RoomData} from '../../../utils/mapview'
 import {hexAreaPoints} from '../../../utils/hex'
@@ -15,8 +15,8 @@ export default function Maps() {
     const [mapData, setMapData] = useState<MapData>();
     const [mapName, setMapName] = useState<string>('');
     const [mapList, setMapList] = useState<MapData[]>([]);
-	const {selectedProject, setSelectedProject} = useContext(SelectedProject);
-    const {filterByProject, setFilterByProject} = useContext(FilterByProject);
+	const {selectedProject} = useContext(SelectedProject);
+    const {filterByProject} = useContext(FilterByProject);
 
     useEffect(() => {
         updateMapList();
