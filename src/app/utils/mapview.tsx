@@ -69,9 +69,9 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom}: 
     const screenPoints: ScreenPoint[] = [];
 
     const colors = {
-        background: "#aaa",
+        background: "#444",
         floor: "white",
-        wall: "#777",
+        wall: "#999",
         hilight: "cyan",
         text: "black",
     };
