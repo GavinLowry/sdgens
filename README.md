@@ -5,8 +5,7 @@ https://dexie.org/docs/API-Reference#add-items
 
 
 TODO:
-filter displayed maps if toggled
-click listed map to open, edit and delete
+click listed map to open, edit and delete (be sure to populate map name input)
 mapview: leave "to" room selected after connect
 mapview: disable connect button unless a node is selected
 mapview: (maybe) fire a connect event on keyboard "c"
@@ -16,6 +15,7 @@ flag "orphan" items whose project has been removed
 support change item's project
 
 DONE:
+filter displayed maps if toggled
 name maps, save maps and show a list of saved maps
 only generate maps when you click a generate button
 in mapview support user-created connections

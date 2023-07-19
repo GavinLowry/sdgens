@@ -7,6 +7,8 @@ https://dexie.org/docs/API-Reference#add-items
 */
 
 const database = new Dexie("database");
+
+// REMEMBER to update the version number when making table changes
 database.version(4).stores({
 	// don't declare all columns like in SQL -- just columns you want to search by
 	projects: '++id', // name, npcs, etc.

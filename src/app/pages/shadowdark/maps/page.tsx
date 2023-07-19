@@ -16,6 +16,7 @@ export default function Maps() {
     const [mapName, setMapName] = useState<string>('');
     const [mapList, setMapList] = useState<MapData[]>([]);
 	const {selectedProject, setSelectedProject} = useContext(SelectedProject);
+    const {filterByProject, setFilterByProject} = useContext(FilterByProject);
 
     useEffect(() => {
         updateMapList();
@@ -23,7 +24,7 @@ export default function Maps() {
 
     function generateMap(roomCount: number): MapData {
         let lastId = 0;
-        const md: MapData = {rooms: []};
+        const md: MapData = {rooms: [], projectId: selectedProject};
         const points = hexAreaPoints(3);
         const roomPoints = [];
         for (let i=0; i<roomCount; ++i) {
@@ -94,6 +95,7 @@ export default function Maps() {
 		mapTable
 		.toArray()
 		.then((list) => {
+            console.log({list})
 			setMapList(list);
 		})
 	}
@@ -114,7 +116,11 @@ export default function Maps() {
                 <MapView mapData={mapData} onConnect={onConnect} />
             }
             <div>
-                {mapList.map((m, index) => renderMapListItem(m, index))}
+                {
+                    mapList
+                    .filter(m => !filterByProject || m.projectId === selectedProject)
+                    .map((m, index) => renderMapListItem(m, index))
+                }
             </div>
         </div>
     );
