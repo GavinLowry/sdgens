@@ -15,3 +15,8 @@ export interface INpc {
 	name: string;
 }
 
+export interface IMap {
+	id: number;
+	projectId: number;
+	name: string;
+}
