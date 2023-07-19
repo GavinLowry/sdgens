@@ -4,7 +4,7 @@ import {useContext, useEffect, useState, SyntheticEvent} from 'react'
 import {mapTable} from "../../../database/database.config";
 import MapView, {MapData, RoomData} from '../../../utils/mapview'
 import {hexAreaPoints} from '../../../utils/hex'
-import {roll} from '../../../utils/random'
+import {roll, chooseRandom} from '../../../utils/random'
 import {FilterByProject, SelectedProject} from '../../../context';
 import './maps.css';
 
@@ -23,6 +23,20 @@ export default function Maps() {
         updateMapList();
     }, []);
 
+    function rollRoomFeatures() {
+        const featureIndex = roll(0, roomFeatures.length-1);
+        const feature = roomFeatures[featureIndex];
+        const title = feature.type;
+        let description = '';
+        if (feature.options?.list1) {
+            description += chooseRandom(feature.options.list1);
+        }
+        if (feature.options?.list2) {
+            description += ' ' + chooseRandom(feature.options.list2);
+        }
+        return {featureIndex, title, description}
+    }
+
     function generateMap(roomCount: number): MapData {
         let lastId = 0;
         const md: MapData = {rooms: [], projectId: selectedProject};
@@ -36,15 +50,20 @@ export default function Maps() {
 
         const heightMult = .5;
         const spacing = 12;
-        md.rooms = roomPoints.map(p => ({
-            id: lastId++,
-            title: "",
-            location: {
-                x: p.x * spacing,
-                y: p.y * spacing * heightMult
-            },
-        }));
-
+        md.rooms = roomPoints.map(p => {
+            const features = rollRoomFeatures();
+            const description = features.description;
+            return {
+                id: lastId++,
+                title: features.title,
+                description,
+                featureIndex: features.featureIndex,
+                location: {
+                    x: p.x * spacing,
+                    y: p.y * spacing * heightMult
+                },
+            }
+        });
         return md;
     }
 
@@ -108,7 +127,6 @@ export default function Maps() {
 		mapTable
 		.toArray()
 		.then((list) => {
-            console.log({list})
 			setMapList(list);
 		})
 	}
@@ -146,6 +164,23 @@ export default function Maps() {
 		}
 	}
 
+    function onRerollRoom(room: RoomData): void {
+        if (!mapData) { return; }
+        const {description, featureIndex, title} = rollRoomFeatures();
+        const rooms = [...mapData.rooms];
+        const existing = rooms.find(r => r.id === room.id)
+        const index = rooms.indexOf(existing!);
+        rooms[index] = {
+            ...rooms[index],
+            description, featureIndex, title
+        }
+        const updating = {
+            ...mapData,
+            rooms
+        }
+        setMapData(updating);
+    }
+
     return (
         <div>
             <div>maps</div>
@@ -156,7 +191,7 @@ export default function Maps() {
                 <button onClick={onDelete}>delete</button>
             </div>
             {mapData &&
-                <MapView mapData={mapData} onConnect={onConnect} />
+                <MapView mapData={mapData} onConnect={onConnect} onRerollRoom={onRerollRoom} />
             }
             <div>
                 {
@@ -168,3 +203,44 @@ export default function Maps() {
         </div>
     );
 }
+
+interface RoomFeatures {
+    type: string;
+    options?: {
+        list1: string[];
+        list2?: string[];
+    };
+}
+
+const roomFeatures: RoomFeatures[] = [
+    {type: 'empty'},
+    {type: 'empty'},
+    {type: 'trap', options: {
+        list1: ['Crude','Ranged','Sturdy','Sturdy','Ancient','Large'],
+        list2: ['Ensnaring','Toxic','Mechanical','Mechanical','Magical','Deadly'],
+    }},
+    {type: 'minor hazard', options: {
+        list1: [
+            'Short fall','Stuck or locked barrier','Stuck or locked barrier',
+            'Dense rubble','Collapsing walls','Enfeebling magic'
+        ]
+    }},
+    {type: 'solo monster', options: {
+        list1: ['Sneaky','Mighty','Clever','Mighty','Clever','Mutated'],
+        list2: ['Ambusher','Brute','Brute','Spellcaster','Spellcaster','Pariah'],
+    }},
+    {type: 'NPC', options: {list1: ['Hiding','Captive','Wounded','Captive','Wounded','Rival crawlers']}},
+    {type: 'monster mob', options: {
+        list1: ['Stealthy','Reckless','Reckless','Magical','Primitive','Organized'],
+        list2: ['Outcasts','Minions','Minions','Tricksters','Vermin','Warriors'],
+    }},
+    {type: 'major hazard', options: {
+        list1: ['Long fall','Long fall','Toxic gas or vapors','Entrapping terrain','Antimagic zone','Drowning hazard']
+    }},
+    {type: 'treasure', options: {
+        list1: ['Hidden','Guarded by monster','Hidden','Guarded by monster','Protected by trap','Protected by hazard']
+    }},
+    {type: 'boss monster', options: {
+        list1: ['Physically strongest','Cult leader','Guarded by minions','Guarded by minions','Guarded by minions','Supreme sorcerer']
+    }},
+];

@@ -17,6 +17,7 @@ export interface RoomData {
     title: string;
     location: Point;
     description?: string;
+    featureIndex?: number;
     exits?: ExitData[];
 }
 
@@ -39,9 +40,10 @@ const commands = {
 export interface MapViewApps {
     mapData: MapData | undefined,
     onConnect(from: RoomData, to: RoomData | undefined): void;
+    onRerollRoom(room: RoomData): void;
 }
 
-export default function MapView({mapData, onConnect}: MapViewApps) {
+export default function MapView({mapData, onConnect, onRerollRoom}: MapViewApps) {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
     const [canvas, setCanvas] = useState<HTMLCanvasElement>();
 
@@ -68,8 +70,9 @@ export default function MapView({mapData, onConnect}: MapViewApps) {
     const colors = {
         background: "#aaa",
         floor: "white",
-        wall: "black",
+        wall: "#777",
         hilight: "cyan",
+        text: "black",
     };
 
     useEffect(() => {
@@ -141,7 +144,24 @@ export default function MapView({mapData, onConnect}: MapViewApps) {
             ctx.stroke();
             ctx.restore();
         }
+        ctx.fillStyle = colors.text;
+        ctx.textAlign = "center";
+        drawMapText(mapData);
         ctx.restore();
+    }
+
+    function drawMapText(data: MapData): void {
+        if (!mapData || !ctx) {return;}
+        data.rooms.forEach(room => {
+            const center = mapToScreenPoint(room.location);
+            ctx.font = "15px Arial";
+            ctx.fillText(`${room.featureIndex}`, center.x, center.y - 15);
+            ctx.fillText(room.title, center.x, center.y);
+            if (room.description) {
+                ctx.font = "12px Arial";
+                ctx.fillText(room.description, center.x, center.y + 15);
+            }
+        });
     }
 
     function drawMap(data: MapData): void {
@@ -222,10 +242,16 @@ export default function MapView({mapData, onConnect}: MapViewApps) {
         setCommand(commands.CONNECT);
     }
 
+    function onRerollRoomFeatures() {
+        if (!selectedRoom) { return; }
+        onRerollRoom(selectedRoom)
+    }
+
     return (
         <div>
             <div className="mv-button-row">
                 <button onClick={onConnectCommand} disabled={!selectedRoom}>connect</button>
+                <button onClick={onRerollRoomFeatures} disabled={!selectedRoom}>re-roll features</button>
             </div>
             <canvas id="viewer" width={width} height={height} />
         </div>

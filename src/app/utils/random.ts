@@ -4,7 +4,7 @@ export function roll(lo: number, hi: number): number {
 	return Math.floor(Math.random() * span) + lo;
 }
 
-function chooseRandom(options: string[]): string {
+export function chooseRandom(options: string[]): string {
 	return options[roll(0,options.length-1)];
 }
 
