@@ -14,8 +14,8 @@ export interface ExitData {
 
 export interface RoomData {
     id: number;
-    title: string;
     location: Point;
+    title: string;
     description?: string;
     featureIndex?: number;
     exits?: ExitData[];
@@ -41,9 +41,10 @@ export interface MapViewApps {
     mapData: MapData | undefined,
     onConnect(from: RoomData, to: RoomData | undefined): void;
     onRerollRoom(room: RoomData): void;
+    onEditRoom(room: RoomData): void;
 }
 
-export default function MapView({mapData, onConnect, onRerollRoom}: MapViewApps) {
+export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom}: MapViewApps) {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
     const [canvas, setCanvas] = useState<HTMLCanvasElement>();
 
@@ -247,11 +248,17 @@ export default function MapView({mapData, onConnect, onRerollRoom}: MapViewApps)
         onRerollRoom(selectedRoom)
     }
 
+    function onEditRoomFeatures() {
+        if (!selectedRoom) { return; }
+        onEditRoom(selectedRoom)
+    }
+
     return (
         <div>
             <div className="mv-button-row">
                 <button onClick={onConnectCommand} disabled={!selectedRoom}>connect</button>
                 <button onClick={onRerollRoomFeatures} disabled={!selectedRoom}>re-roll features</button>
+                <button onClick={onEditRoomFeatures} disabled={!selectedRoom}>edit features</button>
             </div>
             <canvas id="viewer" width={width} height={height} />
         </div>

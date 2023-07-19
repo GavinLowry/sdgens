@@ -1,11 +1,13 @@
 'use client'
 
-import {useContext, useEffect, useState, SyntheticEvent} from 'react'
+import {ChangeEvent, useContext, useEffect, useState, SyntheticEvent} from 'react'
 import {mapTable} from "../../../database/database.config";
 import MapView, {MapData, RoomData} from '../../../utils/mapview'
 import {hexAreaPoints} from '../../../utils/hex'
 import {roll, chooseRandom} from '../../../utils/random'
 import {FilterByProject, SelectedProject} from '../../../context';
+import Modal from '../../../components/modal';
+
 import './maps.css';
 
 /*
@@ -16,6 +18,10 @@ export default function Maps() {
     const [mapData, setMapData] = useState<MapData>();
     const [mapName, setMapName] = useState<string>('');
     const [mapList, setMapList] = useState<MapData[]>([]);
+    const [editRoom, setEditRoom] = useState<RoomData | undefined>();
+    const [editTitle, setEditTitle] = useState<string>('');
+    const [editDescription, setEditDescription] = useState<string>('');
+    const [editFeatureIndex, setEditFeatureIndex] = useState<number>(0);
 	const {selectedProject} = useContext(SelectedProject);
     const {filterByProject} = useContext(FilterByProject);
 
@@ -164,11 +170,10 @@ export default function Maps() {
 		}
 	}
 
-    function onRerollRoom(room: RoomData): void {
+    function changeRoomFeatures(roomId: number, title: string, description: string, featureIndex: number) {
         if (!mapData) { return; }
-        const {description, featureIndex, title} = rollRoomFeatures();
         const rooms = [...mapData.rooms];
-        const existing = rooms.find(r => r.id === room.id)
+        const existing = rooms.find(r => r.id === roomId)
         const index = rooms.indexOf(existing!);
         rooms[index] = {
             ...rooms[index],
@@ -181,6 +186,47 @@ export default function Maps() {
         setMapData(updating);
     }
 
+    function onRerollRoom(room: RoomData): void {
+        const {title, description, featureIndex} = rollRoomFeatures();
+        changeRoomFeatures(room.id, title, description, featureIndex);
+    }
+
+    function onCloseRoomModal() {
+        console.log('onCloseRoomModal');
+    }
+
+    function onChangeEditTitle(event: ChangeEvent<HTMLInputElement>): void {
+        const target = event.target;
+        setEditTitle(target.value);
+    }
+
+    function onChangeEditDescription(event: ChangeEvent<HTMLInputElement>): void {
+        const target = event.target;
+        setEditDescription(target.value);
+    }
+
+    function onChangeEditFeatureIndex(event: ChangeEvent<HTMLInputElement>): void {
+        const target = event.target;
+        setEditFeatureIndex(parseInt(target.value));
+    }
+
+    function onSubmitEditRoom() {
+        if (!editRoom) { return; }
+        changeRoomFeatures(editRoom.id, editTitle, editDescription, editFeatureIndex);
+        setEditRoom(undefined);
+    }
+
+    function onCancelEditRoom() {
+        setEditRoom(undefined);
+    }
+
+    function onEditRoom (room: RoomData) {
+        setEditTitle(room.title);
+        setEditDescription(room.description ?? '');
+        setEditFeatureIndex(room.featureIndex ?? 0);
+        setEditRoom(room);
+    }
+
     return (
         <div>
             <div>maps</div>
@@ -191,7 +237,7 @@ export default function Maps() {
                 <button onClick={onDelete}>delete</button>
             </div>
             {mapData &&
-                <MapView mapData={mapData} onConnect={onConnect} onRerollRoom={onRerollRoom} />
+                <MapView mapData={mapData} onConnect={onConnect} onRerollRoom={onRerollRoom} onEditRoom={onEditRoom} />
             }
             <div>
                 {
@@ -200,6 +246,33 @@ export default function Maps() {
                     .map((m, index) => renderMapListItem(m, index))
                 }
             </div>
+            {editRoom &&
+                <Modal
+                    title="Edit Room"
+                    open={!!editRoom}
+                    onClose={onCloseRoomModal}
+                >
+                    <div>
+                        id: {editRoom.id}
+                    </div>
+                    <div>
+                        <label htmlFor='title'>Title</label>
+                        <input type="text" name="title" value={editTitle} onChange={onChangeEditTitle} />
+                    </div>
+                    <div>
+                        <label htmlFor='Description'>Description</label>
+                        <input type="text" name="Description" value={editDescription} onChange={onChangeEditDescription} />
+                    </div>
+                    <div>
+                        <label htmlFor='featureIndex'>FeatureIndex</label>
+                        <input type="text" name="featureIndex" value={editFeatureIndex} onChange={onChangeEditFeatureIndex} />
+                    </div>
+                    <div>
+                        <button onClick={onSubmitEditRoom}>submit</button>
+                        <button onClick={onCancelEditRoom}>cancel</button>
+                    </div>
+                </Modal>
+            }
         </div>
     );
 }
