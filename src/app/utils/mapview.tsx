@@ -92,7 +92,6 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom}: 
         document.addEventListener('keypress', (event) => {
             const name = event.key;
             const code = event.code;
-            console.log({name,code})
             if (name === 'c') {
                 if (selectedRoomRef.current) {
                     onConnectCommand();
@@ -239,7 +238,6 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom}: 
     }
 
     function onConnectCommand() {
-        console.log('onConnectCommand')
         setCommand(commands.CONNECT);
     }
 
