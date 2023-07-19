@@ -17,6 +17,7 @@ export interface RoomData {
     title: string;
     location: Point;
     description?: string;
+    featureIndex?: number;
     exits?: ExitData[];
 }
 
@@ -68,8 +69,9 @@ export default function MapView({mapData, onConnect}: MapViewApps) {
     const colors = {
         background: "#aaa",
         floor: "white",
-        wall: "black",
+        wall: "#777",
         hilight: "cyan",
+        text: "black",
     };
 
     useEffect(() => {
@@ -141,7 +143,24 @@ export default function MapView({mapData, onConnect}: MapViewApps) {
             ctx.stroke();
             ctx.restore();
         }
+        ctx.fillStyle = colors.text;
+        ctx.textAlign = "center";
+        drawMapText(mapData);
         ctx.restore();
+    }
+
+    function drawMapText(data: MapData): void {
+        if (!mapData || !ctx) {return;}
+        data.rooms.forEach(room => {
+            const center = mapToScreenPoint(room.location);
+            ctx.font = "15px Arial";
+            ctx.fillText(`${room.featureIndex}`, center.x, center.y - 15);
+            ctx.fillText(room.title, center.x, center.y);
+            if (room.description) {
+                ctx.font = "12px Arial";
+                ctx.fillText(room.description, center.x, center.y + 15);
+            }
+        });
     }
 
     function drawMap(data: MapData): void {

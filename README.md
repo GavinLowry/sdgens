@@ -5,12 +5,14 @@ https://dexie.org/docs/API-Reference#add-items
 
 
 TODO:
-roll room types and show on map
+allow room feature reroll
+allow hall (connection) removal
 land hex map page (maybe rename previous map page to cave map or dark map)
 flag "orphan" items whose project has been removed
 support change item's project
 
 DONE:
+roll room features and show on map
 mapview: fire a connect event on keyboard "c"
 mapview: disable connect button unless a node is selected
 click listed map to open, edit and delete (be sure to populate map name input)
