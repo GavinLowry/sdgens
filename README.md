@@ -5,7 +5,6 @@ https://dexie.org/docs/API-Reference#add-items
 
 
 TODO:
-click listed map to open, edit and delete (be sure to populate map name input)
 mapview: disable connect button unless a node is selected
 mapview: (maybe) fire a connect event on keyboard "c"
 roll room types and show on map
@@ -14,6 +13,7 @@ flag "orphan" items whose project has been removed
 support change item's project
 
 DONE:
+click listed map to open, edit and delete (be sure to populate map name input)
 mapview: leave "to" room selected after connect
 filter displayed maps if toggled
 name maps, save maps and show a list of saved maps

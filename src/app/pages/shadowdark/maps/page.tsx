@@ -6,6 +6,7 @@ import MapView, {MapData, RoomData} from '../../../utils/mapview'
 import {hexAreaPoints} from '../../../utils/hex'
 import {roll} from '../../../utils/random'
 import {FilterByProject, SelectedProject} from '../../../context';
+import './maps.css';
 
 /*
 Shadowdark p. 130
@@ -81,11 +82,23 @@ export default function Maps() {
             projectId: selectedProject,
         };
 		try {
-			const id = mapTable
-			.add(data)
-			.then(() => {
-				updateMapList();
-			});
+            if (data.id) {
+                mapTable.put(data)
+                .then(() => {
+                    updateMapList();
+                })
+            } else {
+                mapTable
+                .add(data)
+                .then((result) => {
+                    const id: number = result as number;
+                    setMapData({
+                        ...data,
+                        id
+                    })
+                    updateMapList();
+                });
+            }
 		} catch (error) {
 			console.error(`failed to add ${data}: ${error}`);
 		}
@@ -100,9 +113,38 @@ export default function Maps() {
 		})
 	}
 
-    function renderMapListItem(data: MapData, index: number) {
-        return <div key={`${index}:${data.name}`}>{data.name}</div>
+    function onClickMapListItem(data: MapData): void {
+        setMapData(data);
+        setMapName(data.name ?? '');
     }
+
+    function renderMapListItem(data: MapData, index: number) {
+        return <div 
+        key={`${index}:${data.name}`} 
+        onClick={()=>{onClickMapListItem(data)}}
+        className='list-item'
+        >
+            {data.name}
+        </div>
+    }
+
+    function onDelete(): void {
+		if (!mapData) {return;}
+		if (!confirm(`Really delete ${mapData.name}?`)) { return; }
+		try {
+			if (mapData.id) {
+				mapTable
+				.delete(mapData.id as number)
+				.then(() => {
+					updateMapList();
+					setMapData(undefined);
+                    setMapName('');
+				})
+			}
+		} catch (error) {
+			console.error(`failed to delete ${mapData}: ${error}`);
+		}
+	}
 
     return (
         <div>
@@ -111,6 +153,7 @@ export default function Maps() {
                 <button onClick={onGenerate}>generate</button>
                 <input type="text" value={mapName} onChange={onChangeName} placeholder='map name'></input>
                 <button onClick={onSave}>save</button>
+                <button onClick={onDelete}>delete</button>
             </div>
             {mapData &&
                 <MapView mapData={mapData} onConnect={onConnect} />

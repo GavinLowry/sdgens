@@ -192,7 +192,7 @@ const Npcs: FC = () => {
 
 		return (
 			<div
-				className="npc-list-item"
+				className="list-item"
 				key={`${npc.id}:${npc.name}`}
 				onClick={() => onClickStoredNpc(npc)}
 			>
