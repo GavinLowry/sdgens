@@ -2,7 +2,7 @@
 
 import {ChangeEvent, useContext, useEffect, useState, SyntheticEvent} from 'react'
 import {mapTable} from "../../../database/database.config";
-import MapView, {MapData, RoomData} from '../../../utils/mapview'
+import MapView, {MapData, RoomData, RoomExit} from '../../../utils/mapview'
 import {hexAreaPoints} from '../../../utils/hex'
 import {roll, chooseRandom} from '../../../utils/random'
 import {FilterByProject, SelectedProject} from '../../../context';
@@ -22,6 +22,7 @@ export default function Maps() {
     const [editTitle, setEditTitle] = useState<string>('');
     const [editDescription, setEditDescription] = useState<string>('');
     const [editFeatureIndex, setEditFeatureIndex] = useState<number>(0);
+    const [roomCount, setRoomCount] = useState<string>("10");
 	const {selectedProject} = useContext(SelectedProject);
     const {filterByProject} = useContext(FilterByProject);
 
@@ -43,12 +44,13 @@ export default function Maps() {
         return {featureIndex, title, description}
     }
 
-    function generateMap(roomCount: number): MapData {
+    function generateMap(rooms: number): MapData {
+        if (rooms > 19) { rooms = 19; }
         let lastId = 0;
         const md: MapData = {rooms: [], projectId: selectedProject};
         const points = hexAreaPoints(3);
         const roomPoints = [];
-        for (let i=0; i<roomCount; ++i) {
+        for (let i=0; i<rooms; ++i) {
             const index = roll(0, points.length - 1);
             const p = points.splice(index,1)[0];
             roomPoints.push(p);
@@ -73,19 +75,33 @@ export default function Maps() {
         return md;
     }
 
+    function getNextId(): number {
+        if (!mapData) { return 0; }
+        let nextId = 0;
+        mapData.rooms.forEach(room => {
+            if (room.id > nextId) { nextId = room.id; }
+            if (room.exits) {
+                room.exits.forEach(exit => {
+                    if (exit.id > nextId) { nextId = exit.id; }
+                })
+            }
+        })
+        return nextId + 1;
+    }
+
     function onConnect(from: RoomData, to: RoomData) {
         const fromRoom = mapData!.rooms.find(r => r.id === from.id);
         if (fromRoom && to) {
             if (!fromRoom.hasOwnProperty('exits')) {
                 fromRoom.exits = [];
             }
-            fromRoom.exits!.push({destination: to.id})
+            fromRoom.exits!.push({destination: to.id, id: getNextId()})
         }
     }
 
     function onGenerate() {
         // TODO: allow map size or room count selection
-        const md: MapData = generateMap(10);
+        const md: MapData = generateMap(parseInt(roomCount));
         setMapData(md);
     }
 
@@ -227,17 +243,38 @@ export default function Maps() {
         setEditRoom(room);
     }
 
+    function onRemoveHall (roomExit: RoomExit) {
+        const tempMap = {...mapData};
+        if (!tempMap || !tempMap.rooms) { return; }
+        const roomIndex = tempMap.rooms.indexOf(roomExit.room);
+        const exitIndex = tempMap.rooms[roomIndex].exits?.findIndex(ex => ex.id === roomExit.exit.id);
+        if (exitIndex! > -1) {
+            tempMap.rooms[roomIndex].exits?.splice(exitIndex!, 1);
+        }
+        setMapData(tempMap as MapData);
+    }
+
+    function onChangeRoomCount(event: SyntheticEvent<HTMLInputElement>): void {
+        const target = event.target as HTMLInputElement;
+        const {value} = target;
+        setRoomCount(value);}
+
     return (
         <div>
             <div>maps</div>
             <div>
+                <input type="text" value={roomCount} onChange={onChangeRoomCount} />
+                <span>rooms</span>
                 <button onClick={onGenerate}>generate</button>
                 <input type="text" value={mapName} onChange={onChangeName} placeholder='map name'></input>
                 <button onClick={onSave}>save</button>
                 <button onClick={onDelete}>delete</button>
             </div>
             {mapData &&
-                <MapView mapData={mapData} onConnect={onConnect} onRerollRoom={onRerollRoom} onEditRoom={onEditRoom} />
+                <MapView
+                    mapData={mapData} onConnect={onConnect} onRerollRoom={onRerollRoom} onEditRoom={onEditRoom}
+                    onRemoveHall={onRemoveHall}
+                />
             }
             <div>
                 {

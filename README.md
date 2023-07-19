@@ -5,12 +5,14 @@ https://dexie.org/docs/API-Reference#add-items
 
 
 TODO:
-allow hall (connection) removal
-land hex map page (maybe rename previous map page to cave map or dark map)
+land hex map page
 flag "orphan" items whose project has been removed
 support change item's project
+support some kind of export - data dump, save map as image, etc.
 
 DONE:
+allow map size or room count selection
+allow hall (connection) removal
 allow room feature edit
 allow room feature reroll
 roll room features and show on map
