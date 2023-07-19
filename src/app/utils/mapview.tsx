@@ -214,7 +214,7 @@ export default function MapView({mapData, onConnect}: MapViewApps) {
     return (
         <div>
             <div className="mv-button-row">
-                <button onClick={onConnectCommand}>connect</button>
+                <button onClick={onConnectCommand} disabled={!selectedRoom}>connect</button>
             </div>
             <canvas id="viewer" width={width} height={height} />
         </div>
