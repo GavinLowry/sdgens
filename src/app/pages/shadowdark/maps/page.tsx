@@ -103,6 +103,7 @@ export default function Maps() {
         // TODO: allow map size or room count selection
         const md: MapData = generateMap(parseInt(roomCount));
         setMapData(md);
+        setMapName('');
     }
 
     function onChangeName(event: SyntheticEvent<HTMLInputElement>): void {

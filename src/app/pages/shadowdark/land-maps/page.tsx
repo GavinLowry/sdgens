@@ -1,18 +1,28 @@
 'use client'
 
-import { useState, SyntheticEvent } from 'react';
+import { ReactNode, useContext, useState, useEffect, SyntheticEvent } from 'react';
 import { LandMapData, LandMapView, LandTileData } from '@/app/utils/landMapView';
 import { getNeighbors, hexAreaPoints } from '@/app/utils/hex';
 import { Point } from '@/app/utils/mapview';
-// TODO: randomize terrain types
-import { terrainLookup, terrainTypes } from '@/app/utils/lookup-tables';
-import { chooseRandom, roll } from '@/app/utils/random';
+import { terrainLookup } from '@/app/utils/lookup-tables';
+import { roll } from '@/app/utils/random';
+import {landMapTable} from "../../../database/database.config";
+import {FilterByProject, SelectedProject} from '../../../context';
+import { StoredItem } from '@/app/database/types';
 
 import './land-maps.css';
 
 export default function LandMaps(){
+    const {selectedProject} = useContext(SelectedProject);
+    const {filterByProject} = useContext(FilterByProject);
     const [mapRadius, setMapRadius] = useState<string>("8");
     const [data, setData] = useState<LandMapData>();
+    const [mapName, setMapName] = useState<string>('');
+    const [mapList, setMapList] = useState<LandMapData[]>([]);
+
+    useEffect(() => {
+        updateMapList();
+    }, []);
 
     function getTileAt(loc: Point, tileList?: LandTileData[]): LandTileData | undefined {
         if (!tileList) {
@@ -38,6 +48,7 @@ export default function LandMaps(){
             tiles
         };
         setData(result);
+        setMapName('');
     }
 
     function generateTileTypes(tile: LandTileData, tileList: LandTileData[]) {
@@ -71,7 +82,11 @@ export default function LandMaps(){
             let lastIndex = terrainLookup.findIndex(t => t.name === lastTile.type);
             if (twodice < 4) { lastIndex += 1; }
             else if (twodice > 8) { lastIndex += 2; }
-            return terrainLookup[lastIndex];
+            if (lastIndex >= terrainLookup.length) {
+                lastIndex -= terrainLookup.length
+            }
+            const entry = terrainLookup[lastIndex];
+            return entry;
         }
     }
 
@@ -94,25 +109,122 @@ export default function LandMaps(){
         });
     }
 
-    function onChangeMapRadius(event: SyntheticEvent<HTMLInputElement>){
+    function onChangeMapRadius(event: SyntheticEvent<HTMLInputElement>) {
         const target = event.target as HTMLInputElement;
         const {value} = target;
         setMapRadius(value);
+    }
+
+    function onChangeMapName(event: SyntheticEvent<HTMLInputElement>) {
+        const target = event.target as HTMLInputElement;
+        const {value} = target;
+        setMapName(value);
+    }
+
+    function onSave(): void {
+        if (!data) { return; }
+        if (!mapName) {
+            alert('Please enter a name for this map.');
+            return;
+        }
+        const landData = {
+            ...data,
+            name: mapName,
+            projectId: selectedProject,
+        };
+		try {
+            if (landData.id) {
+                landMapTable.put(landData)
+                .then(() => {
+                    updateMapList();
+                })
+            } else {
+                landMapTable
+                .add(landData)
+                .then((result) => {
+                    const id: number = result as number;
+                    setData({
+                        ...landData,
+                        id
+                    })
+                    updateMapList();
+                });
+            }
+		} catch (error) {
+			console.error(`failed to add ${data}: ${error}`);
+		}
+    }
+
+	function updateMapList() {
+		landMapTable
+		.toArray()
+		.then((list) => {
+			setMapList(list);
+		})
+	}
+    
+    function onClickStoredMap(id: number) {
+        const selectedMap = mapList.find(m => m.id === id);
+        if (selectedMap) {
+            setData(selectedMap);
+            setMapName(selectedMap.name);
+        }
     }
 
     return (
         <div>
             <div>
                 <label htmlFor='map-radius'>Map Radius</label>
-                <input 
-                    type="text" name='map-radius' value={mapRadius} onChange={onChangeMapRadius}
+                <input
+                    type="text"
+                    name='map-radius'
+                    value={mapRadius}
+                    onChange={onChangeMapRadius}
                     className="lm-radius-field"
                 />
                 <button onClick={onClickGenerate}>generate</button>
+                <input
+                    type="text"
+                    name='map-name'
+                    value={mapName}
+                    onChange={onChangeMapName}
+                    className="lm-name-field"
+                />
+                <button onClick={onSave} disabled={!data || !mapName}>save</button>
             </div>
             {
                 data &&
                 <LandMapView data={data} />
+            }
+            {
+                mapList && <StoredItemList itemList={mapList as StoredItem[]} onClick={onClickStoredMap} />
+            }
+        </div>
+    );
+}
+
+interface StoredItemListAttrs {
+    itemList: StoredItem[];
+    onClick(id: number): void;
+}
+
+function StoredItemList({itemList, onClick}: StoredItemListAttrs): ReactNode {
+    function renderItem(item: StoredItem): ReactNode {
+        return (
+            <div
+                key={`${item.id}:${item.name}`}
+                className="list-item"
+                onClick={() => {onClick(item.id)}}
+            >
+                {item.name}
+            </div>
+        );
+    }
+
+    return (
+        <div>
+            {
+                itemList.map(item => renderItem(item))
             }
         </div>
     );

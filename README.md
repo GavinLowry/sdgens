@@ -1,16 +1,24 @@
 
-Dexie reference
+Dexie reference:
 https://dexie.org/docs/API-Reference#add-items
 
 
+npm run dev
+
 
 TODO:
-- store and retrieve land maps
+- filter land maps by project
+- rivers
+- focus and zoom land map view
+- ? land tile random events / points of interest ?
+- land map: allow selecting a hex and storing that selection in map object (gm 'bookmark')
 - flag "orphan" items whose project has been removed
 - support change item's project
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- land type icons
+- store and retrieve land maps
 - land hex map page - generate and show maps
 - allow map size or room count selection
 - allow hall (connection) removal
@@ -31,9 +39,3 @@ DONE:
 - click npc from list to show it in a form. support delete
 - fix the screen width problem
 - toggle to filter displayed lists to show only npcs that pertain to the current project
-
-
-
-
-npm run dev
-
