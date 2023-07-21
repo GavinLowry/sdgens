@@ -5,12 +5,13 @@ https://dexie.org/docs/API-Reference#add-items
 
 
 TODO:
-- land hex map page
+- store and retrieve land maps
 - flag "orphan" items whose project has been removed
 - support change item's project
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- land hex map page - generate and show maps
 - allow map size or room count selection
 - allow hall (connection) removal
 - allow room feature edit

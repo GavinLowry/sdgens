@@ -257,7 +257,8 @@ export default function Maps() {
     function onChangeRoomCount(event: SyntheticEvent<HTMLInputElement>): void {
         const target = event.target as HTMLInputElement;
         const {value} = target;
-        setRoomCount(value);}
+        setRoomCount(value);
+    }
 
     return (
         <div>

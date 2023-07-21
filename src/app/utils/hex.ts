@@ -42,3 +42,7 @@ export function hexAreaPoints(radius: number): Point[] {
     }
     return result;
 }
+
+export function getNeighbors(p: Point): Point[] {
+    return hexRingPoints(1).map(r => ({x:r.x+p.x, y:r.y+p.y}));
+}
