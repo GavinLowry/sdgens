@@ -12,6 +12,7 @@ export interface LandTileData {
 
 export interface LandMapData {
     id?: number;
+    projectId: number;
     name: string;
     tiles: LandTileData[];
 }

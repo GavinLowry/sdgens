@@ -7,7 +7,6 @@ npm run dev
 
 
 TODO:
-- filter land maps by project
 - rivers
 - focus and zoom land map view
 - ? land tile random events / points of interest ?
@@ -17,6 +16,7 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- filter land maps by project
 - land type icons
 - store and retrieve land maps
 - land hex map page - generate and show maps

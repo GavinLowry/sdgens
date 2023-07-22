@@ -15,7 +15,7 @@ import './land-maps.css';
 export default function LandMaps(){
     const {selectedProject} = useContext(SelectedProject);
     const {filterByProject} = useContext(FilterByProject);
-    const [mapRadius, setMapRadius] = useState<string>("8");
+    const [mapRadius, setMapRadius] = useState<string>("9");
     const [data, setData] = useState<LandMapData>();
     const [mapName, setMapName] = useState<string>('');
     const [mapList, setMapList] = useState<LandMapData[]>([]);
@@ -23,6 +23,10 @@ export default function LandMaps(){
     useEffect(() => {
         updateMapList();
     }, []);
+
+    useEffect(() => {
+        updateMapList();
+    }, [filterByProject]);
 
     function getTileAt(loc: Point, tileList?: LandTileData[]): LandTileData | undefined {
         if (!tileList) {
@@ -45,6 +49,7 @@ export default function LandMaps(){
         }
         const result: LandMapData = {
             name: "",
+            projectId: selectedProject,
             tiles
         };
         setData(result);
@@ -159,7 +164,8 @@ export default function LandMaps(){
 		landMapTable
 		.toArray()
 		.then((list) => {
-			setMapList(list);
+            const filtered = list.filter(m => m.projectId === selectedProject || !filterByProject);
+			setMapList(filtered);
 		})
 	}
     
