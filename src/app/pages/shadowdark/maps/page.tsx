@@ -2,9 +2,9 @@
 
 import {ChangeEvent, useContext, useEffect, useState, SyntheticEvent} from 'react'
 import {mapTable} from "../../../database/database.config";
-import MapView, {MapData, RoomData, RoomExit} from '../../../utils/mapview'
-import {hexAreaPoints} from '../../../utils/hex'
-import {roll, chooseRandom} from '../../../utils/random'
+import MapView, {MapData, RoomData, RoomExit} from '../utils/mapview'
+import {hexAreaPoints} from '../utils/hex'
+import {roll, chooseRandom} from '../utils/random'
 import {FilterByProject, SelectedProject} from '../../../context';
 import Modal from '../../../components/modal';
 
@@ -264,10 +264,11 @@ export default function Maps() {
     return (
         <div>
             <div>maps</div>
-            <div>
+            <div className="sd-control-row">
+                <span>rooms:</span>
                 <input type="text" value={roomCount} onChange={onChangeRoomCount} />
-                <span>rooms</span>
                 <button onClick={onGenerate}>generate</button>
+                <div></div>
                 <input type="text" value={mapName} onChange={onChangeName} placeholder='map name'></input>
                 <button onClick={onSave}>save</button>
                 <button onClick={onDelete}>delete</button>

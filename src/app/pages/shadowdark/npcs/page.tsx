@@ -5,7 +5,7 @@ import {SyntheticEvent, useContext, useEffect, useState} from 'react';
 import {npcsTable} from "../../../database/database.config";
 import {INpc} from "../../../database/types";
 import {FilterByProject, SelectedProject} from '../../../context';
-import {generateName} from '../../../utils/random';
+import {generateName} from '../utils/random';
 
 import './npcs.css';
 
@@ -131,7 +131,7 @@ const Npcs: FC = () => {
 			);
 		}
 
-		const attributeNames = Object.keys(attributes);
+		const attributeNames = Object.keys(traits);
 		return (
 			<div className="npc-form">
 				{attributeNames.map(n => {
@@ -240,7 +240,7 @@ interface Npc {
     [key: string]: string | File | undefined;
 }
 
-const attributes: {[key: string]: string[]} = {
+const traits: {[key: string]: string[]} = {
 	name: [],
 	race: ['human','elf','dwarf','halfling','half-orc','goblin'],
 	occupation: ['gravedigger','tax collector','baker','locksmith','carpenter','farmer','cook','cobbler','scholar','bartender','sailor','friar/nun','blacksmith','beggar','butcher','merchant'],
@@ -257,15 +257,15 @@ function roll(lo: number, hi: number): number {
 	return Math.floor(Math.random() * span) + lo;
 }
 
-function chooseRandom(attribute: string): string {
-	const options = attributes[attribute];
+function chooseRandom(trait: string): string {
+	const options = traits[trait];
 	return options[roll(0,options.length-1)];
 }
 
 function generate(): Npc {
 	const npc: Npc = {};
-	const attributeNames = Object.keys(attributes);
-	attributeNames.forEach(name => {
+	const traitNames = Object.keys(traits);
+	traitNames.forEach(name => {
 		if(name==='name') {
 			npc.name = generateName();
 		} else {

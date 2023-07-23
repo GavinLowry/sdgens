@@ -100,8 +100,7 @@ body {
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+  margin: 0 .5rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -119,6 +118,8 @@ a {
 }
 
 .top-nav a {
+  color: inherit;
+  text-decoration: none;
   padding: 1rem;
 }
 

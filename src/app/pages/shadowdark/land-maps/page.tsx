@@ -1,11 +1,11 @@
 'use client'
 
 import { ReactNode, useContext, useState, useEffect, SyntheticEvent } from 'react';
-import { LandMapData, LandMapView, LandTileData } from '@/app/utils/landMapView';
-import { getNeighbors, hexAreaPoints } from '@/app/utils/hex';
-import { Point } from '@/app/utils/mapview';
-import { terrainLookup } from '@/app/utils/lookup-tables';
-import { roll } from '@/app/utils/random';
+import { LandMapData, LandMapView, LandTileData } from '@/app/pages/shadowdark/utils/landMapView';
+import { getNeighbors, hexAreaPoints } from '@/app/pages/shadowdark/utils/hex';
+import { Point } from '@/app/pages/shadowdark/utils/mapview';
+import { terrainLookup } from '@/app/pages/shadowdark/utils/lookup-tables';
+import { roll } from '@/app/pages/shadowdark/utils/random';
 import {landMapTable} from "../../../database/database.config";
 import {FilterByProject, SelectedProject} from '../../../context';
 import { StoredItem } from '@/app/database/types';
@@ -179,7 +179,7 @@ export default function LandMaps(){
 
     return (
         <div>
-            <div>
+            <div className="sd-control-row">
                 <label htmlFor='map-radius'>Map Radius</label>
                 <input
                     type="text"
