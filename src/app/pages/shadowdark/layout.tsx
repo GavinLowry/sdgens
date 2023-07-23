@@ -47,6 +47,7 @@ export default function ShadowdarkLayout({children}: {children: ReactNode}) {
                 <Link href="/pages/shadowdark/projects">projects</Link>
                 <Link href="/pages/shadowdark/maps">maps</Link>
                 <Link href="/pages/shadowdark/land-maps">land maps</Link>
+                <Link href="/pages/shadowdark/characters">characters</Link>
                 <Link href="/pages/shadowdark/npcs">npcs</Link>
             </div>
             <div className="sd-right-column">

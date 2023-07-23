@@ -91,10 +91,10 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom, o
     const screenPoints: ScreenPoint[] = [];
 
     const colors = {
-        background: "#444",
+        background: "#568",
         floor: "white",
-        wall: "#999",
-        hilight: "cyan",
+        wall: "#226",
+        hilight: "#9bf",
         text: "black",
     };
 
@@ -218,12 +218,26 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom, o
         if (!mapData || !ctx) {return;}
         data.rooms.forEach(room => {
             const center = mapToScreenPoint(room.location);
+            const lineHeight = 15;
+            const cursor = { ...center }
+
             ctx.font = "15px Arial";
-            ctx.fillText(`${room.featureIndex}`, center.x, center.y - 15);
-            ctx.fillText(room.title, center.x, center.y);
+            cursor.y -= lineHeight * 2;
+            ctx.fillText(`${room.featureIndex}`, cursor.x, cursor.y);
+
+            const titleAry = room.title.split(" ");
+            titleAry.forEach(word => {
+                cursor.y += lineHeight
+                ctx.fillText(word, cursor.x, cursor.y);
+            })
+
             if (room.description) {
                 ctx.font = "12px Arial";
-                ctx.fillText(room.description, center.x, center.y + 15);
+                const descAry = room.description.split(" ");
+                descAry.forEach(word => {
+                    ctx.fillText(word, cursor.x, cursor.y + 15);
+                    cursor.y += lineHeight
+                })
             }
         });
     }
@@ -371,7 +385,7 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom, o
 
     return (
         <div>
-            <div className="mv-button-row">
+            <div className="sd-control-row">
                 <button onClick={onConnectCommand} disabled={!selectedRoom}>connect</button>
                 <button onClick={onRerollRoomFeatures} disabled={!selectedRoom}>re-roll features</button>
                 <button onClick={onEditRoomFeatures} disabled={!selectedRoom}>edit features</button>

@@ -7,7 +7,12 @@ npm run dev
 
 
 TODO:
-- rivers
+- characters
+- dark map: sometimes connect doesn't respond
+- dark map: sometimes halls can't be selected
+- dark map: put halls "under" rooms
+- dark map: can't select halls (with some maps)
+- land map: rivers
 - focus and zoom land map view
 - ? land tile random events / points of interest ?
 - land map: allow selecting a hex and storing that selection in map object (gm 'bookmark')

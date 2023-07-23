@@ -52,3 +52,35 @@
 	font-style: italic;
 	color: blue;
 }
+
+.sd-control-row {
+    margin: 1rem 0;
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+}
+
+.sd-control-row button {
+    padding: 1rem;
+    color: white;
+    background-color: #46b;
+    border: none;
+    border-radius: 1rem;
+}
+
+.sd-control-row button:disabled {
+    background-color: #78b;
+    color: #abc;
+}
+
+.sd-control-row input {
+    padding: 1rem;
+    background-color: #cde;
+    border: 1px solid #46b;
+    border-radius: .5rem;
+    color: #246;
+}
+
+.sd-control-row input::placeholder {
+    color: #79b;
+}

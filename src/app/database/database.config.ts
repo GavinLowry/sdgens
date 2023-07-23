@@ -9,13 +9,14 @@ https://dexie.org/docs/API-Reference#add-items
 const database = new Dexie("database");
 
 // REMEMBER to update the version number when making table changes
-database.version(5).stores({
+database.version(6).stores({
 	// don't declare all columns like in SQL -- just columns you want to search by
 	projects: '++id', // name, npcs, etc.
 	settings: 'id', // value
 	npcs: '++id, projectId, name',
 	maps: '++id, projectId, name',
 	landMaps: '++id, projectId, name',
+	character: '++id, projectId, name',
 });
 
 export const projectTable = database.table('projects');
