@@ -124,7 +124,11 @@ export function CharacterSheet ({character, onChange}: CharacterSheetAttrs): Rea
                 }
                 {character.talents.length > 0 &&
                     <div>
-                        {character.talents.map((t, index) => ( <div key={`${index}-${t}`}>{t}</div> ))}
+                        {
+                            character.talents
+                                .slice(0, allowed)
+                                .map((t, index) => ( <div key={`${index}-${t}`}>{t}</div> ))
+                        }
                     </div>
                 }
             </div>
