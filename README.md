@@ -7,11 +7,11 @@ npm run dev
 
 
 TODO:
-- characters
+- characters: move reroll stats button into character sheet
 - dark map: sometimes connect doesn't respond
-- dark map: sometimes halls can't be selected
-- dark map: put halls "under" rooms
 - dark map: can't select halls (with some maps)
+- dark map: put halls "under" rooms
+- land map: make map list and map side by side
 - land map: rivers
 - focus and zoom land map view
 - ? land tile random events / points of interest ?
@@ -21,6 +21,8 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- characters: save character - show character list and sheet side by side
+- characters
 - filter land maps by project
 - land type icons
 - store and retrieve land maps

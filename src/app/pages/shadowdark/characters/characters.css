@@ -1,8 +1,15 @@
+.ch-main {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 1rem;
+}
+
 .ch-sheet {
     border: 1px solid gray;
     border-radius: 1rem;
     padding: 1rem;
-    background-color: #FCF5E5;
+    background-color: #F2ecE6;
+    color: #644;
     display: flex;
     flex-direction: column;
     gap: 1rem;

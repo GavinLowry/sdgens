@@ -1,9 +1,12 @@
 'use client'
 
-import { ChangeEvent, ReactNode, useContext, useState } from 'react';
+import { ChangeEvent, ReactNode, useContext, useEffect, useState } from 'react';
 import { FilterByProject, SelectedProject } from '@/app/context';
 import { chooseRandom, generateName, roll} from '../utils/random';
 import { backgroundOptions, classDetails, ancestryDetails } from '../utils/lookup-tables';
+import { characterTable } from '@/app/database/database.config';
+import { StoredItem } from '@/app/database/types';
+import { StoredItemList } from '@/app/components/stored-item-list';
 
 import './characters.css';
 
@@ -11,6 +14,11 @@ export default function Characters () {
 	const {selectedProject} = useContext(SelectedProject);
 	const {filterByProject} = useContext(FilterByProject);
     const [character, setCharacter] = useState<Character>();
+    const [characterList, setCharacterList] = useState<Character[]>();
+
+    useEffect(() => {
+        updateCharacterList();
+    }, [selectedProject, filterByProject]);
 
     function rollStats(): { [index: string]: number } {
         const threeDice = (): number => (roll(1,6) + roll(1,6) + roll(1,6));
@@ -48,16 +56,63 @@ export default function Characters () {
         setCharacter(temp);
     }
 
+    function updateCharacterList (): void {
+		characterTable
+		.toArray()
+		.then((list) => {
+            const filtered = list.filter(c => {
+                return !filterByProject || c.projectId === selectedProject;
+            });
+			setCharacterList(filtered);
+		})
+    }
+
+    function onSaveCharacter (): void {
+		try {
+            if (character?.id) {
+                characterTable
+                .put(character)
+                .then(() => {
+                    updateCharacterList();
+                });
+            } else {
+                const id = characterTable
+                .add(character)
+                .then(() => {
+                    updateCharacterList();
+                });
+            }
+		} catch (error) {
+			console.error(`failed to add ${character}: ${error}`);
+		}
+    }
+
+    function onClickStoredCharacter (characterId: number): void {
+        const char = characterList?.find(c => c.id === characterId)
+        if (char) {
+            setCharacter(char);
+        }
+    }
+
     return (
-        <div>
-            characters
-            <div className="sd-control-row">
-                <button onClick={onClickGenerate}>generate</button>
-                <button onClick={rerollStats} disabled={!character}>
-                    {character?.stats ? 're' : ''}roll stats
-                </button>
+        <div className="ch-main">
+            <div>
+                <div>characters</div>
+                {
+                    characterList && 
+                    <StoredItemList itemList={characterList as StoredItem[]} onClick={onClickStoredCharacter} />
+                }
             </div>
-            { character && <CharacterSheet character={character} onChange={onChangeCharacter} /> }
+            <div>
+                <div className="sd-control-row">
+                    <button onClick={onClickGenerate}>generate</button>
+                    <button onClick={rerollStats} disabled={!character}>
+                        {character?.stats ? 're' : ''}roll stats
+                    </button>
+                    <button onClick={onSaveCharacter}>save</button>
+                </div>
+                { character && <CharacterSheet character={character} onChange={onChangeCharacter} /> }
+            </div>
         </div>
     );
 }
@@ -248,7 +303,7 @@ function ClassDetailSheet ({characterClass, level}: {characterClass: string, lev
                     <div>{s.details}</div>
                 </div>
             ))}
-            {classData.spellsKnown && <div>
+            {classData.spellsKnown && <div>spells known:&nbsp;
                 {tiers.map((tier) => <span key={`tier${tier}`}>{classData.spellsKnown!(level, tier)} </span>)}
             </div>}
         </div>
@@ -276,6 +331,10 @@ function RandomEditField ({label, value, reroll, onChange}: RandomEditFieldAttrs
 
 function SelectEditField ({label, value, options, onChange}: SelectEditFieldAttrs): ReactNode {
     const [selection, setSelection] = useState('');
+
+    useEffect(() => {
+        if(value) { setSelection(value); }
+    }, [value])
 
     function onSelect(event: ChangeEvent<HTMLSelectElement>) {
         const {value} = event.target;

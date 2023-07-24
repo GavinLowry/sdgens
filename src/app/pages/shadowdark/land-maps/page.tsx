@@ -9,6 +9,7 @@ import { roll } from '@/app/pages/shadowdark/utils/random';
 import {landMapTable} from "../../../database/database.config";
 import {FilterByProject, SelectedProject} from '../../../context';
 import { StoredItem } from '@/app/database/types';
+import { StoredItemList } from '@/app/components/stored-item-list';
 
 import './land-maps.css';
 
@@ -204,33 +205,6 @@ export default function LandMaps(){
             }
             {
                 mapList && <StoredItemList itemList={mapList as StoredItem[]} onClick={onClickStoredMap} />
-            }
-        </div>
-    );
-}
-
-interface StoredItemListAttrs {
-    itemList: StoredItem[];
-    onClick(id: number): void;
-}
-
-function StoredItemList({itemList, onClick}: StoredItemListAttrs): ReactNode {
-    function renderItem(item: StoredItem): ReactNode {
-        return (
-            <div
-                key={`${item.id}:${item.name}`}
-                className="list-item"
-                onClick={() => {onClick(item.id)}}
-            >
-                {item.name}
-            </div>
-        );
-    }
-
-    return (
-        <div>
-            {
-                itemList.map(item => renderItem(item))
             }
         </div>
     );
