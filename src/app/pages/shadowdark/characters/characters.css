@@ -39,3 +39,7 @@
 .ch-detail-sheet .title {
     font-weight: 500;
 }
+
+.ch-sheet button {
+    background-color: #544;
+}

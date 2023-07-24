@@ -60,12 +60,21 @@
     align-items: baseline;
 }
 
-.sd-control-row button {
+button {
     padding: 1rem;
-    color: white;
-    background-color: #46b;
     border: none;
     border-radius: 1rem;
+    font-weight: 500;
+    font-variant: small-caps;
+    color: white;
+}
+
+button:hover {
+    color: gold;
+}
+
+.sd-control-row button {
+    background-color: #46b;
 }
 
 .sd-control-row button:disabled {

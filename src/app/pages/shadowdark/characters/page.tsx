@@ -10,6 +10,15 @@ import { StoredItemList } from '@/app/components/stored-item-list';
 
 import './characters.css';
 
+function rollStats(): { [index: string]: number } {
+    const threeDice = (): number => (roll(1,6) + roll(1,6) + roll(1,6));
+    const tempStats: any = {};
+    for (let stat of statNames) {
+        tempStats[stat] = threeDice();
+    }
+    return tempStats;
+}
+
 export default function Characters () {
 	const {selectedProject} = useContext(SelectedProject);
 	const {filterByProject} = useContext(FilterByProject);
@@ -19,15 +28,6 @@ export default function Characters () {
     useEffect(() => {
         updateCharacterList();
     }, [selectedProject, filterByProject]);
-
-    function rollStats(): { [index: string]: number } {
-        const threeDice = (): number => (roll(1,6) + roll(1,6) + roll(1,6));
-        const tempStats: any = {};
-        for (let stat of statNames) {
-            tempStats[stat] = threeDice();
-        }
-        return tempStats;
-    }
 
     function rerollStats (): void {
         const tempCharacter: Character = {
@@ -106,9 +106,6 @@ export default function Characters () {
             <div>
                 <div className="sd-control-row">
                     <button onClick={onClickGenerate}>generate</button>
-                    <button onClick={rerollStats} disabled={!character}>
-                        {character?.stats ? 're' : ''}roll stats
-                    </button>
                     <button onClick={onSaveCharacter}>save</button>
                 </div>
                 { character && <CharacterSheet character={character} onChange={onChangeCharacter} /> }
@@ -172,6 +169,15 @@ function CharacterSheet ({character, onChange}: CharacterSheetAttrs): ReactNode 
         return chooseRandom(backgroundOptions);
     }
 
+    function rerollStats() {
+        const newStats = rollStats();
+        const temp = {
+            ...character,
+            stats: newStats
+        }
+        onChange(temp);
+    }
+
     function talentsAllowed(level: number, ancestry: string): number {
         const allowed = Math.ceil(level / 2) + ((ancestry === 'human') ? 1 : 0);
         return allowed;
@@ -225,9 +231,14 @@ function CharacterSheet ({character, onChange}: CharacterSheetAttrs): ReactNode 
                 <input type='text' value={character.level} onChange={onChangeLevel} />
             </div>
             <div>
+                <div>
                 {
                     character.stats && renderStats()
                 }
+                </div>
+                <div>
+                    <button onClick={rerollStats}>reroll</button>
+                </div>
             </div>
             { character.stats &&
                 <div className='ch-special-field'>

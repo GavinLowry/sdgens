@@ -7,7 +7,8 @@ npm run dev
 
 
 TODO:
-- characters: move reroll stats button into character sheet
+- move character sheet into a separate file
+- if level drops and character has too many talents, remove excess
 - dark map: sometimes connect doesn't respond
 - dark map: can't select halls (with some maps)
 - dark map: put halls "under" rooms
@@ -21,6 +22,7 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- characters: move reroll stats button into character sheet
 - characters: save character - show character list and sheet side by side
 - characters
 - filter land maps by project
