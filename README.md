@@ -7,7 +7,6 @@ npm run dev
 
 
 TODO:
-- move character sheet into a separate file
 - if level drops and character has too many talents, remove excess
 - dark map: sometimes connect doesn't respond
 - dark map: can't select halls (with some maps)
@@ -22,6 +21,7 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- move character sheet into a separate file
 - characters: move reroll stats button into character sheet
 - characters: save character - show character list and sheet side by side
 - characters

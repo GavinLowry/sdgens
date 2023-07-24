@@ -249,3 +249,11 @@ export const ancestryDetails = [
     {race: 'halfling', details: "Small, cheerful country folk with mischievous streaks. They enjoy life’s simple pleasures. You know the Common language. Stealthy. Once per day, you can become invisible for 3 rounds."},
     {race: 'human', details: "Bold, adaptable, and diverse people who learn quickly and accomplish mighty deeds. You know the Common language and one additional common language (pg. 32). Ambitious. You gain one additional talent roll at 1st level."},
 ];
+
+export const statNames = ['str','dex','con','int','wis','cha'];
+
+export const ancestryOptions = ['dwarf','elf','goblin','half-orc','halfling','human'];
+
+export const classOptions = ["fighter", "thief", "wizard", "priest", "ranger", "bard"];
+
+export const alignmentOptions = ["lawful","neutral","chaotic"];
