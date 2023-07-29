@@ -1,82 +1,69 @@
 'use client'
 
-import {useEffect, useRef, useState} from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 export interface Point {
     x: number;
     y: number;
 }
 
-export interface ExitData {
-    id: number;
-    destination: number;
-    description?: string;
-}
-
-export interface RoomData {
+export interface MapObjectData {
     id: number;
     location: Point;
+}
+
+export interface RoomData extends MapObjectData {
     title: string;
     description?: string;
     featureIndex?: number;
-    exits?: ExitData[];
+}
+
+export interface HallData extends MapObjectData {
+    rooms: number[];
+}
+
+interface ScreenPoint {
+    location: Point;
+    object: MapObjectData;
 }
 
 export interface MapData {
     projectId: number;
     rooms: RoomData[];
+    halls: HallData[];
     id?: number;
     name?: string;
-}
-
-interface ScreenPoint {
-    location: Point;
-    roomId: number;
-    type: string;
-}
-
-export interface RoomExit {
-    room: RoomData;
-    exit: ExitData;
-}
-
-type ObjectType = "room" | "hall";
-
-interface ClickedObject {
-    type: ObjectType;
-    object: RoomData | RoomExit;
 }
 
 const commands = {
     CONNECT: 'connect',
 };
 
+let screenPoints: ScreenPoint[] = [];
+
 export interface MapViewApps {
     mapData: MapData | undefined,
-    onConnect(from: RoomData, to: RoomData | undefined): void;
-    onRerollRoom(room: RoomData): void;
-    onEditRoom(room: RoomData): void;
-    onRemoveHall(exit: RoomExit): void;
+    onConnect(from: number, to: number): void;
+    onRerollRoom(roomId: number): void;
+    onEditRoom(roomId: number): void;
+    onRemoveHall(hallId: number): void;
+    onChangeName(event: ChangeEvent<HTMLInputElement>): void;
 }
 
-export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom, onRemoveHall}: MapViewApps) {
+export default function MapView({
+        mapData, onConnect, onRerollRoom, onEditRoom, onRemoveHall, onChangeName
+    }: MapViewApps) {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
     const [canvas, setCanvas] = useState<HTMLCanvasElement>();
+    const [mapId, setMapId] = useState<number | undefined>();
 
-    const [selectedExit, _setSelectedExit] = useState<RoomExit | undefined>();
-    const selectedExitRef = useRef(selectedExit);
-    const setSelectedExit = (exit: RoomExit | undefined) => {
-        selectedExitRef.current = exit;
-        _setSelectedExit(exit);
+    const [selectedObject, _setSelectedObject] = useState<MapObjectData | undefined>();
+    const selectedObjectRef = useRef(selectedObject);
+    const setSelectedObject = (obj: MapObjectData | undefined) => {
+        selectedObjectRef.current = obj;
+        _setSelectedObject(obj);
     }
 
-    const [selectedRoom, _setSelectedRoom] = useState<RoomData | undefined>();
-    const selectedRoomRef = useRef(selectedRoom);
-    const setSelectedRoom = (data: RoomData | undefined) => {
-        selectedRoomRef.current = data;
-        _setSelectedRoom(data);
-    }
-    
     const [command, _setCommand] = useState<string>('');
     const commandRef = useRef(command);
     const setCommand = (data: string) => {
@@ -86,9 +73,8 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom, o
 
     const width = 600;
     const height = 600;
-    const unit = 10;
-    const roomRadius = 4;
-    const screenPoints: ScreenPoint[] = [];
+    const unit = 120;
+    const roomRadius = 1/3;
 
     const colors = {
         background: "#568",
@@ -105,69 +91,39 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom, o
     }, [])
 
     useEffect(() => {
-        if (!mapData || !canvas || !ctx) { return; }
+        if (!canvas || !ctx) { return; }
         canvas.addEventListener("click", onClick);
         document.addEventListener('keypress', (event) => {
             const name = event.key;
             const code = event.code;
             if (name === 'c') {
-                if (selectedRoomRef.current) {
-                    onConnectCommand();
-                }
+                onConnectCommand();
             }
         });
         draw();
-    }, [mapData, ctx, canvas])
+    }, [ctx, canvas])
+
+    useEffect(() => {
+        if (!mapData) { return; }
+        if (mapData.id !== mapId) {
+            setMapId(mapData.id);
+            setSelectedObject(undefined);
+        }
+        draw();
+    }, [mapData])
 
     useEffect(() => {
         draw();
-    }, [selectedRoom])
-
-    useEffect(() => {
-        console.log({selectedExit:selectedExit?.exit.id ?? 'none'})
-        draw();
-    }, [selectedExit])
-
-    function onClick(event: MouseEvent): void {
-        const {offsetX, offsetY} = event;
-        const obj = getClickedObject(offsetX, offsetY);
-        if (obj) {
-            console.log({obj})
-            if (obj.type === "hall") {
-                setSelectedExit(obj.object as RoomExit);
-                setSelectedRoom(undefined);
-            }
-            else if (obj.type === "room") {
-                clickRoom(obj.object as RoomData);
-                setSelectedExit(undefined);
-            }
-        } else {
-            setSelectedExit(undefined);
-            setSelectedRoom(undefined);
-        }
-    }
-
-    function clickRoom(room: RoomData | undefined) {
-        if (room) {
-            if (commandRef.current === commands.CONNECT) {
-                if (selectedRoomRef.current) {
-                    onConnect(selectedRoomRef.current, room);
-                }
-                setCommand('');
-                setSelectedRoom(room);
-            } else {
-                setSelectedRoom(room);
-            }
-        } else {
-            setSelectedRoom(undefined);
-        }
-    }
+    }, [selectedObject])
 
     function draw() {
         if (!ctx) { return; }
-        ctx.fillStyle =colors.background;
+        screenPoints = [];
+        ctx.fillStyle = colors.background;
         ctx.fillRect(0,0,width,height);
+
         if (!mapData) {return;}
+
         ctx.save();
 
         ctx.fillStyle = colors.wall;
@@ -178,34 +134,7 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom, o
         ctx.fillStyle = colors.floor;
         ctx.strokeStyle = colors.floor;
         ctx.lineWidth = 20;
-        drawMap(mapData);
-
-        if (selectedRoom) {
-            const center = mapToScreenPoint(selectedRoom.location);
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(center.x, center.y, mapToScreenLength(roomRadius), 0, Math.PI*2);
-            ctx.strokeStyle = colors.hilight;
-            ctx.stroke();
-            ctx.restore();
-        }
-
-        if (selectedExit) {
-            const fromId = selectedExit.room.id;
-            const toId = selectedExit.exit.destination;
-            const fromRoom = getRoom(fromId);
-            const toRoom = getRoom(toId);
-            const fromPoint = mapToScreenPoint(fromRoom!.location);
-            const toPoint = mapToScreenPoint(toRoom!.location);
-
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(fromPoint.x, fromPoint.y);
-            ctx.lineTo(toPoint.x, toPoint.y);
-            ctx.strokeStyle = colors.hilight;
-            ctx.stroke();
-            ctx.restore();
-        }
+        drawMap(mapData, true);
 
         ctx.fillStyle = colors.text;
         ctx.textAlign = "center";
@@ -242,120 +171,101 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom, o
         });
     }
 
-    function drawMap(data: MapData): void {
+    function drawMap(data: MapData, secondPass: boolean = false): void {
         if (!mapData || !ctx) {return;}
-        data.rooms.forEach(room => {
-            drawRoom(room);
-            room.exits?.forEach(exit => {
-                const destination = getRoom(exit.destination);
-                drawHall(room.location, destination!.location, exit);
-            })
-        });
+        if (data.halls) {
+            data.halls.forEach(hall => { drawHall(hall, secondPass); })
+        }
+        data.rooms.forEach(room => { drawRoom(room, secondPass); });
     }
 
-    function drawHall(map_start: Point, map_end: Point, exit: ExitData) {
+    function drawHall(hall: HallData, secondPass: boolean) {
         if (!ctx) { return; }
+        const rooms: RoomData[] = mapData!.rooms;
+        if (!rooms) { return; }
+        const room0 = rooms.find( r => r.id === hall.rooms[0]);
+        const map_start = room0?.location;
+        const room1 = rooms.find( r => r.id === hall.rooms[1]);
+        const map_end = room1?.location;
+        if (!map_start || !map_end) { return; }
         const start = mapToScreenPoint(map_start);
         const end = mapToScreenPoint(map_end);
+        if (!secondPass) {
+            screenPoints.push({
+                location: {
+                    x: Math.floor((start.x + end.x)/2),
+                    y: Math.floor((start.y + end.y)/2),
+                },
+                object: hall
+            })
+        }
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
+        if (secondPass && selectedObject && selectedObject.id === hall.id) {
+            ctx.strokeStyle = colors.hilight;
+        }
         ctx.stroke();
         ctx.restore();
-
-        const screenx = start.x + (end.x - start.x) / 2;
-        const screeny = start.y + (end.y - start.y) / 2;
-        screenPoints.push({roomId: exit.id, location: {x:screenx, y:screeny}, type:'hall'});
     }
 
-    function drawRoom(room: RoomData) {
+    function drawRoom(room: RoomData, secondPass: boolean) {
         if (!ctx) { return; }
         const center = room.location;
         const ctr = mapToScreenPoint(center);
+        if (!secondPass) {
+            screenPoints.push({location: ctr, object: room});
+        }
         const rad = mapToScreenLength(roomRadius);
-        screenPoints.push({roomId: room.id, location: ctr, type: 'room'});
+        ctx.save();
         ctx.beginPath();
         ctx.arc(ctr.x, ctr.y, rad, 0, Math.PI*2);
+        if (secondPass && selectedObject && selectedObject.id === room.id) {
+            ctx.fillStyle = colors.hilight;
+            ctx.strokeStyle = colors.hilight;
+        }
         ctx.fill();
         ctx.stroke();
+        ctx.restore();
     }
 
-    function getRoom(id: number): RoomData | undefined {
-        return mapData?.rooms.find(r => r.id === id);
+    function onClick(event: MouseEvent): void {
+        const {offsetX, offsetY} = event;
+        clickObject(offsetX, offsetY);
     }
 
-    function getExit(id: number): RoomExit | undefined {
+    function clickObject (x: number, y:number): void {
         if (!mapData) { return; }
-        for (let room of mapData.rooms) {
-            if (room.exits) {
-                for (let exit of room.exits) {
-                    if (exit.id === id) {
-                        return {room, exit};
-                    }
-                }
-            }
-        }
-        return;
-    }
-
-    function getClickedObject (x: number, y:number): ClickedObject | undefined {
         let maxDist = Math.pow(mapToScreenLength(roomRadius), 2);
         let distsq = 0;
-        let screenPoint: ScreenPoint | undefined = undefined;
+        let screenPoint: ScreenPoint | undefined;
         screenPoints.forEach(sp => {
-            let ds = Math.pow((x - sp.location.x), 2) + Math.pow((y - sp.location.y), 2);
-            if(screenPoint) {
-                if (ds < distsq) {
+            if (sp) {
+                let ds = Math.pow((x - sp.location.x), 2) + Math.pow((y - sp.location.y), 2);
+                if (!screenPoint || ds < distsq) {
                     distsq = ds;
                     screenPoint = sp;
                 }
-            } else {
-                screenPoint = sp;
-                distsq = ds;
             }
         })
-        if (distsq <= maxDist) {
-            const type: ObjectType = screenPoint!.type as ObjectType;
-            if (type === "room") {
-                const room = getRoom(screenPoint!.roomId);
-                return {type, object: room as RoomData};
-            } else {
-                const hall = getExit(screenPoint!.roomId);
-                return {type, object: hall as RoomExit};
-            }
-        } else {
-            return undefined;
-        }
-    }
-
-    function getClickedRoom(x: number, y:number): RoomData | undefined {
-        let maxDist = Math.pow(mapToScreenLength(roomRadius), 2);
-        let distsq = 0;
-        let screenPoint: ScreenPoint | undefined = undefined;
-        screenPoints.forEach(sp => {
-            let ds = Math.pow((x - sp.location.x), 2) + Math.pow((y - sp.location.y), 2);
-            if(screenPoint) {
-                if (ds < distsq) {
-                    distsq = ds;
-                    screenPoint = sp;
+        if (screenPoint && distsq <= maxDist) {
+            if (commandRef.current === commands.CONNECT) {
+                if (isRoom(selectedObjectRef.current) && isRoom(screenPoint.object)) {
+                    onConnect(selectedObjectRef.current!.id, screenPoint.object.id);
+                    setCommand('');
                 }
-            } else {
-                screenPoint = sp;
-                distsq = ds;
             }
-        })
-        if (distsq <= maxDist) {
-            return getRoom(screenPoint!.roomId);
+            setSelectedObject(screenPoint.object);
         } else {
-            return undefined;
+            setSelectedObject(undefined);
         }
     }
 
     function mapToScreenPoint(location: Point): Point {
         return {
             x: width / 2 + location.x * unit,
-            y: height / 2 + location.y * unit
+            y: height / 2 + location.y * unit / 2
         };
     }
 
@@ -368,28 +278,47 @@ export default function MapView({mapData, onConnect, onRerollRoom, onEditRoom, o
     }
 
     function onRerollRoomFeatures() {
-        if (!selectedRoom) { return; }
-        onRerollRoom(selectedRoom)
+        if (!selectedObject) { return; }
+        if (selectedObject.hasOwnProperty('title')){
+            onRerollRoom(selectedObject.id)
+        }
     }
 
     function onEditRoomFeatures() {
-        if (!selectedRoom) { return; }
-        onEditRoom(selectedRoom)
+        if (!selectedObject) { return; }
+        if (isRoom(selectedObject)){
+            onEditRoom(selectedObject.id);
+        }
     }
 
     function handleRemoveHall() {
-        console.log('onRemoveHall')
-        onRemoveHall(selectedExitRef.current!);
-        setSelectedExit(undefined);
+        if (!selectedObjectRef.current) { return; }
+        if (isHall(selectedObjectRef.current)) {
+            onRemoveHall(selectedObjectRef.current.id);
+            setSelectedObject(undefined);
+        }
+    }
+
+    function isRoom(obj: MapObjectData | undefined): boolean {
+        if (!obj) { return false; }
+        return obj.hasOwnProperty('title');
+    }
+
+    function isHall(obj: MapObjectData | undefined): boolean {
+        if (!obj) { return false; }
+        return obj.hasOwnProperty('rooms');
     }
 
     return (
         <div>
             <div className="sd-control-row">
-                <button onClick={onConnectCommand} disabled={!selectedRoom}>connect</button>
-                <button onClick={onRerollRoomFeatures} disabled={!selectedRoom}>re-roll features</button>
-                <button onClick={onEditRoomFeatures} disabled={!selectedRoom}>edit features</button>
-                <button onClick={handleRemoveHall} disabled={!selectedExit}>remove hall</button>
+                { mapData &&
+                    <input type="text" placeholder="map name" value={mapData.name} onChange={onChangeName} />
+                }
+                <button onClick={onConnectCommand} disabled={!isRoom(selectedObject)}>connect</button>
+                <button onClick={onRerollRoomFeatures} disabled={!isRoom(selectedObject)}>re-roll features</button>
+                <button onClick={onEditRoomFeatures} disabled={!isRoom(selectedObject)}>edit features</button>
+                <button onClick={handleRemoveHall} disabled={!isHall(selectedObject)}>remove hall</button>
             </div>
             <canvas id="viewer" width={width} height={height} />
         </div>

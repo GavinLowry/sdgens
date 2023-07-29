@@ -34,9 +34,9 @@ const ModalContent = styled.div `
 
 interface ModalAttrs {
 	open: boolean;
-	onClose: ()=>void;
 	title: string;
 	children: ReactNode;
+	onClose?: ()=>void;
 };
 
 const Modal = (props: ModalAttrs) => {
@@ -45,7 +45,7 @@ const Modal = (props: ModalAttrs) => {
 		const target: HTMLDivElement = event.currentTarget as HTMLDivElement;
 		console.log({id: target.id});
 		if (target.id !== "modal-content-div") {
-			onClose();
+			onClose && onClose();
 		}
 	}
 

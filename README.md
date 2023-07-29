@@ -7,10 +7,10 @@ npm run dev
 
 
 TODO:
+- dark map: move reroll room features into edit features and remove extra button
+- dark map: fix word wrap on map room labels
+- dark map: put map list and map view side by side
 - dark map: sometimes connect doesn't respond
-- dark map: can't select halls (with some maps)
-- dark map: put halls "under" rooms
-- land map: make map list and map side by side
 - land map: rivers
 - focus and zoom land map view
 - ? land tile random events / points of interest ?
@@ -20,6 +20,10 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- land map: make map list and map side by side
+- dark map: put halls "under" rooms
+- dark map: can't select halls (with some maps)
+- dark map: arrange controls better and disable save btn if no map name
 - if level drops and character has too many talents, remove excess
 - move character sheet into a separate file
 - characters: move reroll stats button into character sheet

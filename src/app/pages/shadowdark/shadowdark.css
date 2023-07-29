@@ -67,10 +67,16 @@ button {
     font-weight: 500;
     font-variant: small-caps;
     color: white;
+    background-color: #46b;
 }
 
 button:hover {
     color: gold;
+}
+
+button:disabled {
+    background-color: lightgray;
+    color: gray;
 }
 
 .sd-control-row button {

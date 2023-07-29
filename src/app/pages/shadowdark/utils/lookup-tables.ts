@@ -257,3 +257,44 @@ export const ancestryOptions = ['dwarf','elf','goblin','half-orc','halfling','hu
 export const classOptions = ["fighter", "thief", "wizard", "priest", "ranger", "bard"];
 
 export const alignmentOptions = ["lawful","neutral","chaotic"];
+
+interface RoomFeatures {
+    type: string;
+    options?: {
+        list1: string[];
+        list2?: string[];
+    };
+}
+
+export const roomFeatures: RoomFeatures[] = [
+    {type: 'empty'},
+    {type: 'empty'},
+    {type: 'trap', options: {
+        list1: ['Crude','Ranged','Sturdy','Sturdy','Ancient','Large'],
+        list2: ['Ensnaring','Toxic','Mechanical','Mechanical','Magical','Deadly'],
+    }},
+    {type: 'minor hazard', options: {
+        list1: [
+            'Short fall','Stuck or locked barrier','Stuck or locked barrier',
+            'Dense rubble','Collapsing walls','Enfeebling magic'
+        ]
+    }},
+    {type: 'solo monster', options: {
+        list1: ['Sneaky','Mighty','Clever','Mighty','Clever','Mutated'],
+        list2: ['Ambusher','Brute','Brute','Spellcaster','Spellcaster','Pariah'],
+    }},
+    {type: 'NPC', options: {list1: ['Hiding','Captive','Wounded','Captive','Wounded','Rival crawlers']}},
+    {type: 'monster mob', options: {
+        list1: ['Stealthy','Reckless','Reckless','Magical','Primitive','Organized'],
+        list2: ['Outcasts','Minions','Minions','Tricksters','Vermin','Warriors'],
+    }},
+    {type: 'major hazard', options: {
+        list1: ['Long fall','Long fall','Toxic gas or vapors','Entrapping terrain','Antimagic zone','Drowning hazard']
+    }},
+    {type: 'treasure', options: {
+        list1: ['Hidden','Guarded by monster','Hidden','Guarded by monster','Protected by trap','Protected by hazard']
+    }},
+    {type: 'boss monster', options: {
+        list1: ['Physically strongest','Cult leader','Guarded by minions','Guarded by minions','Guarded by minions','Supreme sorcerer']
+    }},
+];
