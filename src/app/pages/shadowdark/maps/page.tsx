@@ -77,27 +77,6 @@ export default function Maps() {
         setMapChanged(true);
     }
 
-    function rerollRoom(roomId: number): void {
-        if (!mapData) { return; }
-        const index = mapData.rooms.findIndex(r => r.id === roomId);
-        const features = DarkMap.rollRoomFeatures();
-        const oldRoom = mapData.rooms[index];
-        const newRoom: RoomData = {
-            ...oldRoom,
-            featureIndex: features.featureIndex,
-            title: features.title,
-            description: features.description,
-        };
-        setMapData({
-            ...mapData,
-            rooms: [
-                ...mapData.rooms.filter(r => r.id !== oldRoom.id),
-                newRoom,
-            ],
-        });
-        setMapChanged(true);
-    }
-
     function editRoom(roomId: number): void {
         setEditingRoom(true);
         setEditingRoomId(roomId);
@@ -114,6 +93,7 @@ export default function Maps() {
         };
         setMapData(newMap);
         cancelEditRoom();
+        setMapChanged(true);
     }
 
     function cancelEditRoom(): void {
@@ -183,7 +163,7 @@ export default function Maps() {
                 { mapData &&
                     <MapView
                         mapData={mapData} onConnect={addHall} onRemoveHall={removeHall}
-                        onRerollRoom={rerollRoom} onEditRoom={editRoom} onChangeName={changeMapName}
+                        onEditRoom={editRoom} onChangeName={changeMapName}
                     />
                 }
             </div>

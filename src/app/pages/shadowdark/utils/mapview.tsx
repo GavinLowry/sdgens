@@ -44,14 +44,13 @@ let screenPoints: ScreenPoint[] = [];
 export interface MapViewApps {
     mapData: MapData | undefined,
     onConnect(from: number, to: number): void;
-    onRerollRoom(roomId: number): void;
     onEditRoom(roomId: number): void;
     onRemoveHall(hallId: number): void;
     onChangeName(event: ChangeEvent<HTMLInputElement>): void;
 }
 
 export default function MapView({
-        mapData, onConnect, onRerollRoom, onEditRoom, onRemoveHall, onChangeName
+        mapData, onConnect, onEditRoom, onRemoveHall, onChangeName
     }: MapViewApps) {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
     const [canvas, setCanvas] = useState<HTMLCanvasElement>();
@@ -143,6 +142,18 @@ export default function MapView({
         ctx.restore();
     }
 
+    function breakText(text: string, width: number): string[] {
+        if (text.length <= width) { return [text]; }
+        let cursor = width;
+        while (text[cursor] != ' ' && cursor > 0) {
+            cursor -= 1;
+        }
+        if (cursor > 0 && cursor < text.length) {
+            return [text.substring(0,cursor), text.substring(cursor+1)];
+        }
+        return [text];
+    }
+
     function drawMapText(data: MapData): void {
         if (!mapData || !ctx) {return;}
         data.rooms.forEach(room => {
@@ -154,7 +165,9 @@ export default function MapView({
             cursor.y -= lineHeight * 2;
             ctx.fillText(`${room.featureIndex}`, cursor.x, cursor.y);
 
-            const titleAry = room.title.split(" ");
+            const maxWidth = 10;
+
+            const titleAry = breakText(room.title, maxWidth);
             titleAry.forEach(word => {
                 cursor.y += lineHeight
                 ctx.fillText(word, cursor.x, cursor.y);
@@ -162,7 +175,7 @@ export default function MapView({
 
             if (room.description) {
                 ctx.font = "12px Arial";
-                const descAry = room.description.split(" ");
+                const descAry = breakText(room.description, maxWidth);
                 descAry.forEach(word => {
                     ctx.fillText(word, cursor.x, cursor.y + 15);
                     cursor.y += lineHeight
@@ -277,13 +290,6 @@ export default function MapView({
         setCommand(commands.CONNECT);
     }
 
-    function onRerollRoomFeatures() {
-        if (!selectedObject) { return; }
-        if (selectedObject.hasOwnProperty('title')){
-            onRerollRoom(selectedObject.id)
-        }
-    }
-
     function onEditRoomFeatures() {
         if (!selectedObject) { return; }
         if (isRoom(selectedObject)){
@@ -316,7 +322,6 @@ export default function MapView({
                     <input type="text" placeholder="map name" value={mapData.name} onChange={onChangeName} />
                 }
                 <button onClick={onConnectCommand} disabled={!isRoom(selectedObject)}>connect</button>
-                <button onClick={onRerollRoomFeatures} disabled={!isRoom(selectedObject)}>re-roll features</button>
                 <button onClick={onEditRoomFeatures} disabled={!isRoom(selectedObject)}>edit features</button>
                 <button onClick={handleRemoveHall} disabled={!isHall(selectedObject)}>remove hall</button>
             </div>

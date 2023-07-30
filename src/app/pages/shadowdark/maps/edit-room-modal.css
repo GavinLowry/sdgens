@@ -1,0 +1,9 @@
+.erm-feature-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.erm-feature-form div {
+    display: grid;
+    grid-template-columns: 16rem 1fr;
+}

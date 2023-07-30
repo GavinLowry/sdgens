@@ -7,22 +7,24 @@ npm run dev
 
 
 TODO:
-- dark map: move reroll room features into edit features and remove extra button
-- dark map: fix word wrap on map room labels / descriptions
-- dark map: sometimes connect doesn't respond
 - dark map: room shapes and sizes
 - dark map: hall width
 - dark map: support longer room description for popup when user clicks "?" button
+
 - land map: make map list and map side by side
 - land map: rivers
-- focus and zoom land map view
-- ? land tile random events / points of interest ?
+- land map: focus and zoom land map view
+- land map: ? land tile random events / points of interest ?
 - land map: allow selecting a hex and storing that selection in map object (gm 'bookmark')
+
 - flag "orphan" items whose project has been removed
-- support change item's project
+- support change item project
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- dark map: fix word wrap on map room labels / descriptions
+- dark map: sometimes connect doesn't respond
+- dark map: move reroll room features into edit features and remove extra button
 - dark map: make sure maps have projectId and filter the list
 - dark map: put map list and map view side by side
 - dark map: put halls "under" rooms

@@ -3,6 +3,8 @@ import Modal from '../../../components/modal';
 import { MapData, RoomData } from "../utils/mapview";
 import DarkMap from "../utils/darkMap";
 
+import "./edit-room-modal.css";
+
 interface EditRoomModalAttrs {
     roomId: number,
     mapData: MapData,
@@ -57,6 +59,13 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
         onCancel();
     }
 
+    function onReroll(): void {
+        const {featureIndex, title, description} = DarkMap.rollRoomFeatures();
+        setEditTitle(title);
+        setEditDescription(description);
+        setEditFeatureIndex(`${featureIndex}`);
+    }
+
     return (
         <Modal
             title="Edit Room"
@@ -65,20 +74,23 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
             <div>
                 id: {roomId}
             </div>
-            <div>
-                <label htmlFor='title'>Title</label>
-                <input type="text" name="title" value={editTitle} onChange={onChangeEditTitle} />
-            </div>
-            <div>
-                <label htmlFor='Description'>Description</label>
-                <input type="text" name="Description" value={editDescription} onChange={onChangeEditDescription} />
-            </div>
-            <div>
-                <label htmlFor='featureIndex'>FeatureIndex</label>
-                <input type="text" name="featureIndex" value={editFeatureIndex} onChange={onChangeEditFeatureIndex} />
+            <div className="erm-feature-form">
+                <div>
+                    <label htmlFor='title'>Title</label>
+                    <input type="text" name="title" value={editTitle} onChange={onChangeEditTitle} />
+                </div>
+                <div>
+                    <label htmlFor='Description'>Description</label>
+                    <input type="text" name="Description" value={editDescription} onChange={onChangeEditDescription} />
+                </div>
+                <div>
+                    <label htmlFor='featureIndex'>FeatureIndex</label>
+                    <input type="text" name="featureIndex" value={editFeatureIndex} onChange={onChangeEditFeatureIndex} />
+                </div>
             </div>
             <div className="sd-control-row">
                 <button onClick={onSubmitEditRoom}>submit</button>
+                <button onClick={onReroll}>reroll</button>
                 <button onClick={onCancelEditRoom}>cancel</button>
             </div>
         </Modal>
