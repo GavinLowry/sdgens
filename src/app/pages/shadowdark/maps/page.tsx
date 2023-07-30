@@ -32,8 +32,9 @@ export default function Maps() {
     }
 
     useEffect(() => {
-        console.log({mapChanged})
-    }, [mapChanged])
+        console.log({selectedProject, filterByProject})
+        updateMapList();
+    }, [selectedProject, filterByProject])
 
     useEffect(() => {
         updateMapList();
@@ -44,7 +45,7 @@ export default function Maps() {
         .toArray()
         .then(data => {
             const list: MapListEntry[] = data
-            .filter(m => m.name && m.id)
+            .filter(map => !filterByProject || map.projectId === selectedProject)
             .map((m: MapData) => ({name: m.name!, id: m.id!}));
             setMapList(list);
         })

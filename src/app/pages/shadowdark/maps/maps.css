@@ -21,3 +21,7 @@
 .mp-room-count input {
     width: 6rem;
 }
+
+canvas {
+    border-radius: 1rem;
+}
