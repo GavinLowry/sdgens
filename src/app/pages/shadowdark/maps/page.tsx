@@ -3,7 +3,7 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 import { FilterByProject, SelectedProject } from '../../../context';
 import { mapTable } from "../../../database/database.config";
-import MapView, { HallData, MapData, MapObjectData, Point, RoomData } from "../utils/mapview";
+import MapView, { HallData, lightSettings, MapData, MapObjectData, Point, RoomData } from "../utils/mapview";
 import DarkMap, { objectTypes, roomShapes } from "../utils/darkMap";
 import EditRoomModal from "./edit-room-modal";
 
@@ -44,10 +44,6 @@ export default function Maps() {
         mapDataRef.current = obj;
         _setMapData(obj);
     }
-
-    useEffect(() => {
-        console.log({selectedObject})
-    }, [selectedObject])
 
     useEffect(() => {
         updateMapList();
@@ -163,7 +159,6 @@ export default function Maps() {
     }
 
     function onClickMap(obj: MapObjectData | undefined): void {
-        console.log({selected:selectedObjectRef.current,obj})
         if (commandRef.current === commands.CONNECT) {
             if (!selectedObjectRef.current || !obj) { return; }
             if (selectedObjectRef.current.type === objectTypes.ROOM && obj.type === objectTypes.ROOM) {
@@ -186,7 +181,6 @@ export default function Maps() {
 
     function onChangeShape(event: ChangeEvent<HTMLSelectElement>) {
         if (!mapData || !selectedObject) { return; }
-        console.log({event})
         const { value } = event.target;
         const data = DarkMap.setRoomShape(mapData, selectedObject.id, value);
         setMapData(data);
@@ -244,6 +238,35 @@ export default function Maps() {
         setMapChanged(true);
     }
 
+    function changeLight() {
+        if (!mapData || !selectedObject) { return; }
+        console.log('changeLight')
+        const obj = { ...selectedObject }
+        const settingNames = Object.values(lightSettings);
+        let index = settingNames.findIndex(s => s === (obj.light ?? lightSettings.LIGHT));
+        index += 1;
+        if (index >= settingNames.length) { index = 0; }
+        obj.light = settingNames[index];
+        const data: MapData = { ...mapData };
+        if (obj.type === objectTypes.ROOM) {
+            const rooms = [
+                ...mapData.rooms.filter(r => r.id !== obj.id),
+                obj as RoomData
+            ];
+            data.rooms = rooms;
+        } else {
+            const halls = [
+                ...mapData.halls.filter(h => h.id !== obj.id),
+                obj as HallData
+            ];
+            data.halls = halls;
+        }
+        console.log({obj})
+        setMapData(data);
+        setSelectedObject(obj);
+        setMapChanged(true);
+    }
+
     return (
         <div className="mp-column-container">
 
@@ -288,6 +311,7 @@ export default function Maps() {
                                         ))
                                     }
                                 </select>
+                                <button onClick={changeLight}>{selectedObject?.light ?? lightSettings.LIGHT}</button>
                             </>
                         }
                         {
@@ -303,6 +327,7 @@ export default function Maps() {
                                 <button onClick={changeStairs}>
                                     {(selectedObject as HallData).stairs ?? "no"} stairs
                                 </button>
+                                <button onClick={changeLight}>{selectedObject?.light ?? lightSettings.LIGHT}</button>
                             </>
                         }
                     </div>

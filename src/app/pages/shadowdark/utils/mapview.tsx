@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface Point {
     x: number;
@@ -11,6 +11,7 @@ export interface MapObjectData {
     id: number;
     location: Point;
     type: string;
+    light?: string;
 }
 
 export interface RoomData extends MapObjectData {
@@ -194,8 +195,15 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         ctx.beginPath();
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
-        if (secondPass && selectedObject && selectedObject.id === hall.id) {
-            ctx.strokeStyle = colors.hilight;
+        if (secondPass) {
+            if (selectedObject && selectedObject.id === hall.id) {
+                ctx.strokeStyle = colors.hilight;
+            }
+            else {
+                const floorColor = getFloorColor(hall);
+                ctx.fillStyle = floorColor;
+                ctx.strokeStyle = floorColor;
+            }
         }
         const hallWidth = hall.width ?? 20;
         ctx.lineWidth = secondPass ? hallWidth : hallWidth + 20;
@@ -214,7 +222,6 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         const bottomIndex = hall.stairs === "down" ? hall.rooms[1] : hall.rooms[0];
         const topRoom = mapData.rooms.find(r => r.id === topIndex);
         const bottomRoom = mapData.rooms.find(r => r.id === bottomIndex);
-        console.log({topRoom,bottomRoom})
         if (!topRoom || !bottomRoom) { return; }
         const top = mapToScreenPoint({ ...topRoom.location });
         const bottom = mapToScreenPoint({ ...bottomRoom.location });
@@ -268,11 +275,16 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
             default: drawRoundRoom(ctr, rad); break;
         }
 
-        if (secondPass && selectedObject && selectedObject.id === room.id) {
-            ctx.fillStyle = colors.hilight;
-            ctx.strokeStyle = colors.hilight;
+        if (secondPass) {
+            if (selectedObject && selectedObject.id === room.id) {
+                ctx.fillStyle = colors.hilight;
+                ctx.strokeStyle = colors.hilight;
+            } else {
+                const floorColor = getFloorColor(room);
+                ctx.fillStyle = floorColor;
+                ctx.strokeStyle = floorColor;
+            }
         }
-
         ctx.fill();
         ctx.stroke();
         ctx.restore();
@@ -350,9 +362,24 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
     );
 }
 
+function getFloorColor(obj: MapObjectData): string {
+    if (obj.light === lightSettings.DARK) { return colors.darkFloor; }
+    if (obj.light === lightSettings.DARKER) { return colors.darkerFloor; }
+    return "#fff";
+
+}
+
+export const lightSettings = {
+    LIGHT: 'light',
+    DARK: 'dark',
+    DARKER: 'darker',
+}
+
 const colors = {
     background: "#568",
     floor: "white",
+    darkFloor: "#ccd",
+    darkerFloor: "#aab",
     wall: "#226",
     hilight: "#9bf",
     text: "black",

@@ -26,7 +26,7 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
             setEditRoom(room);
             setEditTitle(room.title);
             setEditDescription(room.description ?? "");
-            setEditRadius(`${room.radius || 3}`);
+            setEditRadius(`${room.radius || 7}`);
         }
     }, [roomId])
 

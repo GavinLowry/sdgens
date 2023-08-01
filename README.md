@@ -9,7 +9,6 @@ npm run dev
 TODO:
 - dark map: map exit labels - a dot at room radius and stored angle from center. place text message
 - dark map: support longer room description for popup when user clicks "?" button
-- dark map: allow two levels of darker room color stored in room and hall data
 
 - land map: make map list and map side by side
 - land map: rivers
@@ -22,6 +21,7 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- dark map: allow two levels of darker room color stored in room and hall data
 - dark map: room text gets hidden by walls. maybe text background
 - dark map: draw stairs
 - dark map: hall width
