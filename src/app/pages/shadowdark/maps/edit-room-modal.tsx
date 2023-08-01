@@ -18,7 +18,7 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
     const [editRoom, setEditRoom] = useState<RoomData>();
     const [editTitle, setEditTitle] = useState<string>("");
     const [editDescription, setEditDescription] = useState<string>("");
-    const [editFeatureIndex, setEditFeatureIndex] = useState<string>("");
+    const [editRadius, setEditRadius] = useState<string>("");
 
     useEffect(() => {
         const room = DarkMap.getRoom(mapData, roomId);
@@ -26,7 +26,7 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
             setEditRoom(room);
             setEditTitle(room.title);
             setEditDescription(room.description ?? "");
-            setEditFeatureIndex(`${room.featureIndex}`);
+            setEditRadius(`${room.radius || 3}`);
         }
     }, [roomId])
 
@@ -40,9 +40,9 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
         setEditDescription(target.value);
     }
 
-    function onChangeEditFeatureIndex(event: ChangeEvent<HTMLInputElement>) {
+    function onChangeEditRadius(event: ChangeEvent<HTMLInputElement>) {
         const target = event.target;
-        setEditFeatureIndex(target.value);
+        setEditRadius(target.value);
     }
 
     function onSubmitEditRoom(): void {
@@ -50,7 +50,7 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
             ...editRoom as RoomData,
             title: editTitle ?? "",
             description: editDescription ?? "",
-            featureIndex: parseInt(editFeatureIndex ?? "0"),
+            radius: parseInt(editRadius ?? "0"),
         };
         onSubmit(newRoom);
     }
@@ -60,10 +60,9 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
     }
 
     function onReroll(): void {
-        const {featureIndex, title, description} = DarkMap.rollRoomFeatures();
+        const {title, description} = DarkMap.rollRoomFeatures();
         setEditTitle(title);
         setEditDescription(description);
-        setEditFeatureIndex(`${featureIndex}`);
     }
 
     return (
@@ -84,8 +83,8 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
                     <input type="text" name="Description" value={editDescription} onChange={onChangeEditDescription} />
                 </div>
                 <div>
-                    <label htmlFor='featureIndex'>FeatureIndex</label>
-                    <input type="text" name="featureIndex" value={editFeatureIndex} onChange={onChangeEditFeatureIndex} />
+                    <label htmlFor='radius'>Radius</label>
+                    <input type="text" name="radius" value={editRadius} onChange={onChangeEditRadius} />
                 </div>
             </div>
             <div className="sd-control-row">

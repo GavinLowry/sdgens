@@ -18,6 +18,7 @@ export interface RoomData extends MapObjectData {
     description?: string;
     featureIndex?: number;
     shape?: string;
+    radius?: number;
 }
 
 export interface HallData extends MapObjectData {
@@ -59,7 +60,7 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
     const width = 600;
     const height = 600;
     const unit = 120;
-    const roomRadius = 1/3;
+    const roomRadius = 3/8;
 
     useEffect(() => {
         const c: HTMLCanvasElement = document.getElementById("viewer") as HTMLCanvasElement;
@@ -199,7 +200,8 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         if (!secondPass) {
             screenPoints.push({location: ctr, object: room});
         }
-        const rad = mapToScreenLength(roomRadius);
+        const storedRadius = room.radius ? room.radius / 10 : roomRadius;
+        const rad = mapToScreenLength(storedRadius);
         ctx.save();
         ctx.beginPath();
 
