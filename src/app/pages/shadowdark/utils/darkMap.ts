@@ -28,6 +28,10 @@ export default class DarkMap {
         return mapData.rooms.find(r => r.location.x === where.x && r.location.y === where.y);
     }
 
+    static getHall(mapData: MapData, hallId: number): HallData | undefined {
+        return mapData.halls.find(r => r.id === hallId);
+    }
+
     static rollRoomFeatures() {
         const featureIndex = roll(0, roomFeatures.length-1);
         const feature = roomFeatures[featureIndex];

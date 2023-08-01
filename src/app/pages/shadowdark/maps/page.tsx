@@ -193,6 +193,39 @@ export default function Maps() {
         setMapChanged(true);
     }
 
+    function wideHall() {
+        if (!mapData || !selectedObject || selectedObject.type !== objectTypes.HALL) { return; }
+        const hall = selectedObject as HallData;
+        hall.width = (hall.width ?? 20) + 5;
+        const halls = [
+            ...mapData.halls.filter(h => h.id !== selectedObject.id),
+            hall,
+        ];
+        const data = {
+            ...mapData,
+            halls,
+        }
+        setMapData(data);
+        setMapChanged(true);
+    }
+
+    function narrowHall() {
+        if (!mapData || !selectedObject || selectedObject.type !== objectTypes.HALL) { return; }
+        const hall = selectedObject as HallData;
+        hall.width = (hall.width ?? 20) - 5;
+        if (hall.width < 1) { hall.width = 1; }
+        const halls = [
+            ...mapData.halls.filter(h => h.id !== selectedObject.id),
+            hall,
+        ];
+        const data = {
+            ...mapData,
+            halls,
+        }
+        setMapData(data);
+        setMapChanged(true);
+    }
+
     return (
         <div className="mp-column-container">
 
@@ -245,7 +278,11 @@ export default function Maps() {
                         }
                         {
                             selectedObject && selectedObject.type === objectTypes.HALL &&
-                            <button onClick={removeHall}>remove hall</button>
+                            <>
+                                <button onClick={removeHall}>remove hall</button>
+                                <button onClick={wideHall}>wide</button>
+                                <button onClick={narrowHall}>narrow</button>
+                            </>
                         }
                     </div>
                 }

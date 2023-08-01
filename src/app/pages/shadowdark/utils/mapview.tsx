@@ -23,6 +23,7 @@ export interface RoomData extends MapObjectData {
 
 export interface HallData extends MapObjectData {
     rooms: number[];
+    width: number;
 }
 
 interface ScreenPoint {
@@ -189,6 +190,8 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         if (secondPass && selectedObject && selectedObject.id === hall.id) {
             ctx.strokeStyle = colors.hilight;
         }
+        const hallWidth = hall.width ?? 20;
+        ctx.lineWidth = secondPass ? hallWidth : hallWidth + 20;
         ctx.stroke();
         ctx.restore();
     }
