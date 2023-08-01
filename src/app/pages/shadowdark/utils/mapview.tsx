@@ -130,6 +130,9 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
 
     function drawMapText(data: MapData): void {
         if (!mapData || !ctx) {return;}
+        ctx.save();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 4;
         data.rooms.forEach(room => {
             const center = mapToScreenPoint(room.location);
             const lineHeight = 15;
@@ -142,6 +145,7 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
             ctx.font = "bold 13px Arial";
             titleAry.forEach(word => {
                 cursor.y += lineHeight
+                ctx.strokeText(word, cursor.x, cursor.y);
                 ctx.fillText(word, cursor.x, cursor.y);
             })
 
@@ -149,11 +153,13 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
                 const descAry = breakText(room.description, maxWidth);
                 ctx.font = "11px Arial";
                 descAry.forEach(word => {
-                    ctx.fillText(word, cursor.x, cursor.y + 15);
                     cursor.y += lineHeight
+                    ctx.strokeText(word, cursor.x, cursor.y);
+                    ctx.fillText(word, cursor.x, cursor.y);
                 })
             }
         });
+        ctx.restore();
     }
 
     function drawMap(data: MapData, secondPass: boolean = false): void {
