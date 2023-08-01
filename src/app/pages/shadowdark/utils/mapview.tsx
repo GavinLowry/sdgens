@@ -61,14 +61,6 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
     const unit = 120;
     const roomRadius = 1/3;
 
-    const colors = {
-        background: "#568",
-        floor: "white",
-        wall: "#226",
-        hilight: "#9bf",
-        text: "black",
-    };
-
     useEffect(() => {
         const c: HTMLCanvasElement = document.getElementById("viewer") as HTMLCanvasElement;
         setCanvas(c);
@@ -215,6 +207,7 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
 
         switch(room.shape) {
             case 'square': drawSquareRoom(ctr, rad); break;
+            case 'hex': drawHexRoom(ctr, rad); break;
             default: drawRoundRoom(ctr, rad); break;
         }
 
@@ -222,9 +215,28 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
             ctx.fillStyle = colors.hilight;
             ctx.strokeStyle = colors.hilight;
         }
+
         ctx.fill();
         ctx.stroke();
         ctx.restore();
+    }
+
+    function drawHexRoom(ctr: Point, rad: number) {
+        if (!ctx) { return; }
+        for (let i=0; i<6; ++i) {
+            const angle = Math.PI / 3 * i;
+            const corner: Point = {
+                x: ctr.x + Math.cos(-angle) * rad,
+                y: ctr.y + Math.sin(-angle) * rad
+            };
+            console.log({corner});
+            if (i === 0) {
+                ctx.moveTo(corner.x, corner.y);
+            } else {
+                ctx.lineTo(corner.x, corner.y);
+            }
+        }
+        ctx.closePath();
     }
 
     function drawSquareRoom(ctr: Point, rad: number) {
@@ -284,3 +296,11 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         <canvas id="viewer" width={width} height={height} />
     );
 }
+
+const colors = {
+    background: "#568",
+    floor: "white",
+    wall: "#226",
+    hilight: "#9bf",
+    text: "black",
+};

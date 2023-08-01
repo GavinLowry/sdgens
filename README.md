@@ -7,7 +7,7 @@ npm run dev
 
 
 TODO:
-- dark map: room shapes and sizes
+- dark map: room sizes
 - dark map: hall width
 - dark map: support longer room description for popup when user clicks "?" button
 
@@ -22,6 +22,7 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- dark map: room shapes
 - dark map: fix word wrap on map room labels / descriptions
 - dark map: sometimes connect doesn't respond
 - dark map: move reroll room features into edit features and remove extra button

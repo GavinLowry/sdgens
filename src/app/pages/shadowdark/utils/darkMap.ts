@@ -148,11 +148,25 @@ export default class DarkMap {
 
     static removeHall(mapData: MapData, hallId: number): MapData | undefined {
         if (!mapData) { return; }
-        // const index = mapData.halls.findIndex(h => h.id === hallId);
-        // mapData.halls.splice(index,1);
         const data = { ...mapData }
         data.halls = [
             ...data.halls.filter(h => h.id !== hallId)
+        ];
+        return data;
+    }
+
+    static changeRoomShape(mapData: MapData, id: number): MapData | undefined {
+        const data = { ...mapData };
+        const room = this.getRoom(mapData, id);
+        if (!room) { return; }
+        const shape = room.shape ?? roomShapes.ROUND;
+        const shapes = Object.values(roomShapes);
+        let shapeIdx = shapes.indexOf(shape) + 1;
+        if (shapeIdx >= shapes.length) { shapeIdx = 0; }
+        room.shape = shapes[shapeIdx];
+        data.rooms = [
+            ...data.rooms.filter(r => r.id !== room.id),
+            room
         ];
         return data;
     }
@@ -163,3 +177,9 @@ export const objectTypes = {
     ROOM: "room",
     HALL: "hall",
 }
+
+export const roomShapes = {
+    ROUND: "round",
+    SQUARE: "square",
+    HEX: "hex",
+};

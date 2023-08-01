@@ -178,6 +178,23 @@ export default function Maps() {
         setCommand(commands.CONNECT);
     }
 
+    function getRoomShape(): string | undefined {
+        if (!selectedObject || selectedObject.type !== objectTypes.ROOM) { return; }
+        const obj = selectedObject as RoomData;
+        return obj.shape ?? "circle";
+    }
+
+    function changeRoomShape(): void {
+        if (!mapData || !selectedObject) {
+            return;
+        }
+        const data = DarkMap.changeRoomShape(mapData, selectedObject.id);
+        if (data) {
+            setMapData(data);
+            setMapChanged(true);
+        }
+    }
+
     return (
         <div className="mp-column-container">
 
@@ -215,6 +232,7 @@ export default function Maps() {
                             <>
                                 <button onClick={onConnectCommand}>connect</button>
                                 <button onClick={editRoom}>edit features</button>
+                                <button onClick={changeRoomShape}>{getRoomShape()}</button>
                             </>
                         }
                         {
