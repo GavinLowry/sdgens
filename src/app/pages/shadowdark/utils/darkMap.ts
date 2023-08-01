@@ -59,6 +59,7 @@ export default class DarkMap {
             const features = this.rollRoomFeatures();
             const description = features.description;
             return {
+                type: objectTypes.ROOM,
                 id: lastId++,
                 title: features.title,
                 description,
@@ -86,6 +87,7 @@ export default class DarkMap {
         if (!room1 || !room2) { return; }
         const location = this.getMidPoint(room1.location, room2.location);
         const hall: HallData = {
+            type: objectTypes.HALL,
             id: this.getNextId(mapData),
             rooms: [room1.id, room2.id],
             location,
@@ -144,4 +146,20 @@ export default class DarkMap {
 		}
     }
 
+    static removeHall(mapData: MapData, hallId: number): MapData | undefined {
+        if (!mapData) { return; }
+        // const index = mapData.halls.findIndex(h => h.id === hallId);
+        // mapData.halls.splice(index,1);
+        const data = { ...mapData }
+        data.halls = [
+            ...data.halls.filter(h => h.id !== hallId)
+        ];
+        return data;
+    }
+
+}
+
+export const objectTypes = {
+    ROOM: "room",
+    HALL: "hall",
 }

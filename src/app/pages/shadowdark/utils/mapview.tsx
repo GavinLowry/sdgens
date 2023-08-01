@@ -10,12 +10,14 @@ export interface Point {
 export interface MapObjectData {
     id: number;
     location: Point;
+    type: string;
 }
 
 export interface RoomData extends MapObjectData {
     title: string;
     description?: string;
     featureIndex?: number;
+    shape?: string;
 }
 
 export interface HallData extends MapObjectData {
@@ -35,23 +37,14 @@ export interface MapData {
     name?: string;
 }
 
-const commands = {
-    CONNECT: 'connect',
-};
-
 let screenPoints: ScreenPoint[] = [];
 
 export interface MapViewApps {
     mapData: MapData | undefined,
-    onConnect(from: number, to: number): void;
-    onEditRoom(roomId: number): void;
-    onRemoveHall(hallId: number): void;
-    onChangeName(event: ChangeEvent<HTMLInputElement>): void;
+    onClick(obj: MapObjectData | undefined): void;
 }
 
-export default function MapView({
-        mapData, onConnect, onEditRoom, onRemoveHall, onChangeName
-    }: MapViewApps) {
+export default function MapView({ mapData, onClick }: MapViewApps) {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
     const [canvas, setCanvas] = useState<HTMLCanvasElement>();
     const [mapId, setMapId] = useState<number | undefined>();
@@ -61,13 +54,6 @@ export default function MapView({
     const setSelectedObject = (obj: MapObjectData | undefined) => {
         selectedObjectRef.current = obj;
         _setSelectedObject(obj);
-    }
-
-    const [command, _setCommand] = useState<string>('');
-    const commandRef = useRef(command);
-    const setCommand = (data: string) => {
-        commandRef.current = data;
-        _setCommand(data);
     }
 
     const width = 600;
@@ -91,14 +77,7 @@ export default function MapView({
 
     useEffect(() => {
         if (!canvas || !ctx) { return; }
-        canvas.addEventListener("click", onClick);
-        document.addEventListener('keypress', (event) => {
-            const name = event.key;
-            const code = event.code;
-            if (name === 'c') {
-                onConnectCommand();
-            }
-        });
+        canvas.addEventListener("click", onClickMap);
         draw();
     }, [ctx, canvas])
 
@@ -233,7 +212,12 @@ export default function MapView({
         const rad = mapToScreenLength(roomRadius);
         ctx.save();
         ctx.beginPath();
-        ctx.arc(ctr.x, ctr.y, rad, 0, Math.PI*2);
+
+        switch(room.shape) {
+            case 'square': drawSquareRoom(ctr, rad); break;
+            default: drawRoundRoom(ctr, rad); break;
+        }
+
         if (secondPass && selectedObject && selectedObject.id === room.id) {
             ctx.fillStyle = colors.hilight;
             ctx.strokeStyle = colors.hilight;
@@ -243,7 +227,21 @@ export default function MapView({
         ctx.restore();
     }
 
-    function onClick(event: MouseEvent): void {
+    function drawSquareRoom(ctr: Point, rad: number) {
+        if (!ctx) { return; }
+        ctx.moveTo(ctr.x - rad, ctr.y - rad);
+        ctx.lineTo(ctr.x + rad, ctr.y - rad);
+        ctx.lineTo(ctr.x + rad, ctr.y + rad);
+        ctx.lineTo(ctr.x - rad, ctr.y + rad);
+        ctx.closePath();
+    }
+
+    function drawRoundRoom(ctr: Point, rad: number) {
+        if (!ctx) { return; }
+        ctx.arc(ctr.x, ctr.y, rad, 0, Math.PI*2);
+    }
+
+    function onClickMap(event: MouseEvent): void {
         const {offsetX, offsetY} = event;
         clickObject(offsetX, offsetY);
     }
@@ -263,15 +261,11 @@ export default function MapView({
             }
         })
         if (screenPoint && distsq <= maxDist) {
-            if (commandRef.current === commands.CONNECT) {
-                if (isRoom(selectedObjectRef.current) && isRoom(screenPoint.object)) {
-                    onConnect(selectedObjectRef.current!.id, screenPoint.object.id);
-                    setCommand('');
-                }
-            }
             setSelectedObject(screenPoint.object);
+            onClick(screenPoint.object);
         } else {
             setSelectedObject(undefined);
+            onClick(undefined);
         }
     }
 
@@ -286,46 +280,7 @@ export default function MapView({
         return length * unit;
     }
 
-    function onConnectCommand() {
-        setCommand(commands.CONNECT);
-    }
-
-    function onEditRoomFeatures() {
-        if (!selectedObject) { return; }
-        if (isRoom(selectedObject)){
-            onEditRoom(selectedObject.id);
-        }
-    }
-
-    function handleRemoveHall() {
-        if (!selectedObjectRef.current) { return; }
-        if (isHall(selectedObjectRef.current)) {
-            onRemoveHall(selectedObjectRef.current.id);
-            setSelectedObject(undefined);
-        }
-    }
-
-    function isRoom(obj: MapObjectData | undefined): boolean {
-        if (!obj) { return false; }
-        return obj.hasOwnProperty('title');
-    }
-
-    function isHall(obj: MapObjectData | undefined): boolean {
-        if (!obj) { return false; }
-        return obj.hasOwnProperty('rooms');
-    }
-
     return (
-        <div>
-            <div className="sd-control-row">
-                { mapData &&
-                    <input type="text" placeholder="map name" value={mapData.name} onChange={onChangeName} />
-                }
-                <button onClick={onConnectCommand} disabled={!isRoom(selectedObject)}>connect</button>
-                <button onClick={onEditRoomFeatures} disabled={!isRoom(selectedObject)}>edit features</button>
-                <button onClick={handleRemoveHall} disabled={!isHall(selectedObject)}>remove hall</button>
-            </div>
-            <canvas id="viewer" width={width} height={height} />
-        </div>
+        <canvas id="viewer" width={width} height={height} />
     );
 }

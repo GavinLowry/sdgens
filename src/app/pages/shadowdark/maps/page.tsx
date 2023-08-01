@@ -3,8 +3,8 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 import { FilterByProject, SelectedProject } from '../../../context';
 import { mapTable } from "../../../database/database.config";
-import MapView, { HallData, MapData, Point, RoomData } from "../utils/mapview";
-import DarkMap from "../utils/darkMap";
+import MapView, { HallData, MapData, MapObjectData, Point, RoomData } from "../utils/mapview";
+import DarkMap, { objectTypes } from "../utils/darkMap";
 import EditRoomModal from "./edit-room-modal";
 
 import './maps.css';
@@ -24,6 +24,20 @@ export default function Maps() {
     const [editingRoomId, setEditingRoomId] = useState<number>(0);
     const [roomCount, setRoomCount] = useState<string>("10");
 
+    const [selectedObject, _setSelectedObject] = useState<MapObjectData>();
+    const selectedObjectRef = useRef(selectedObject);
+    const setSelectedObject = (obj: MapObjectData | undefined) => {
+        selectedObjectRef.current = obj;
+        _setSelectedObject(obj);
+    }
+
+    const [command, _setCommand] = useState<string | undefined>();
+    const commandRef = useRef(command);
+    const setCommand = (cmd: string | undefined) => {
+        commandRef.current = cmd;
+        _setCommand(cmd);
+    }
+
     const [mapData, _setMapData] = useState<MapData | undefined>();
     const mapDataRef = useRef(mapData);
     const setMapData = (obj: MapData | undefined) => {
@@ -32,13 +46,16 @@ export default function Maps() {
     }
 
     useEffect(() => {
-        console.log({selectedProject, filterByProject})
-        updateMapList();
-    }, [selectedProject, filterByProject])
+        console.log({selectedObject})
+    }, [selectedObject])
 
     useEffect(() => {
         updateMapList();
     }, [])
+
+    useEffect(() => {
+        updateMapList();
+    }, [selectedProject, filterByProject])
 
     function updateMapList() {
         mapTable
@@ -70,16 +87,22 @@ export default function Maps() {
         DarkMap.addHall(mapDataRef.current, from,to);
     }
 
-    function removeHall(hallId: number): void {
-        if (!mapData) { return; }
-        const index = mapData.halls.findIndex(h => h.id === hallId);
-        mapData.halls.splice(index,1);
+    function removeHall(): void {
+        if (!mapDataRef.current || !selectedObjectRef.current || selectedObjectRef.current.type !== objectTypes.HALL) {
+            return;
+        }
+
+        const result = DarkMap.removeHall(mapDataRef.current, selectedObjectRef.current.id);
+        setMapData(result);
+        
+        setSelectedObject(undefined);
         setMapChanged(true);
     }
 
-    function editRoom(roomId: number): void {
+    function editRoom(): void {
+        if(!selectedObject || selectedObject.type !== objectTypes.ROOM){ return; }
         setEditingRoom(true);
-        setEditingRoomId(roomId);
+        setEditingRoomId(selectedObject.id);
     }
 
     function submitEditRoom(newRoom: RoomData): void {
@@ -139,8 +162,25 @@ export default function Maps() {
         updateMapList();
     }
 
+    function onClickMap(obj: MapObjectData | undefined): void {
+        console.log({selected:selectedObjectRef.current,obj})
+        if (commandRef.current === commands.CONNECT) {
+            if (!selectedObjectRef.current || !obj) { return; }
+            if (selectedObjectRef.current.type === objectTypes.ROOM && obj.type === objectTypes.ROOM) {
+                addHall(selectedObjectRef.current.id, obj.id);
+                setCommand(undefined);
+            }
+        }
+        setSelectedObject(obj);
+    }
+
+    function onConnectCommand(): void {
+        setCommand(commands.CONNECT);
+    }
+
     return (
         <div className="mp-column-container">
+
             <div className="mp-column">
                 <div className="mp-control-buttons">
                     <div className="mp-room-count">
@@ -159,11 +199,41 @@ export default function Maps() {
                     ))
                 }
             </div>
+
+            <div className="mp-column">
+                { mapData &&
+                    <div className='mp-map-controls'>
+                        <div className='mp-form-field'>
+                            <label htmlFor="map-name">Map Name</label>
+                            <input
+                                type="text" name="map-name" placeholder="map name" value={mapData.name}
+                                onChange={changeMapName}
+                            />
+                        </div>
+                        {
+                            selectedObject && selectedObject.type === objectTypes.ROOM &&
+                            <>
+                                <button onClick={onConnectCommand}>connect</button>
+                                <button onClick={editRoom}>edit features</button>
+                            </>
+                        }
+                        {
+                            command === commands.CONNECT &&
+                            <p>click a destination</p>
+                        }
+                        {
+                            selectedObject && selectedObject.type === objectTypes.HALL &&
+                            <button onClick={removeHall}>remove hall</button>
+                        }
+                    </div>
+                }
+            </div>
+
             <div className="mp-column">
                 { mapData &&
                     <MapView
-                        mapData={mapData} onConnect={addHall} onRemoveHall={removeHall}
-                        onEditRoom={editRoom} onChangeName={changeMapName}
+                        mapData={mapData}
+                        onClick={onClickMap}
                     />
                 }
             </div>
@@ -175,4 +245,8 @@ export default function Maps() {
             }
         </div>
     );
+}
+
+const commands = {
+    CONNECT: "connect",
 }
