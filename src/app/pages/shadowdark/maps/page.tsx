@@ -4,7 +4,7 @@ import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 import { FilterByProject, SelectedProject } from '../../../context';
 import { mapTable } from "../../../database/database.config";
 import MapView, { HallData, MapData, MapObjectData, Point, RoomData } from "../utils/mapview";
-import DarkMap, { objectTypes } from "../utils/darkMap";
+import DarkMap, { objectTypes, roomShapes } from "../utils/darkMap";
 import EditRoomModal from "./edit-room-modal";
 
 import './maps.css';
@@ -184,15 +184,13 @@ export default function Maps() {
         return obj.shape ?? "circle";
     }
 
-    function changeRoomShape(): void {
-        if (!mapData || !selectedObject) {
-            return;
-        }
-        const data = DarkMap.changeRoomShape(mapData, selectedObject.id);
-        if (data) {
-            setMapData(data);
-            setMapChanged(true);
-        }
+    function onChangeShape(event: ChangeEvent<HTMLSelectElement>) {
+        if (!mapData || !selectedObject) { return; }
+        console.log({event})
+        const { value } = event.target;
+        const data = DarkMap.setRoomShape(mapData, selectedObject.id, value);
+        setMapData(data);
+        setMapChanged(true);
     }
 
     return (
@@ -232,7 +230,13 @@ export default function Maps() {
                             <>
                                 <button onClick={onConnectCommand}>connect</button>
                                 <button onClick={editRoom}>edit features</button>
-                                <button onClick={changeRoomShape}>{getRoomShape()}</button>
+                                <select onChange={onChangeShape} value={getRoomShape()}>
+                                    {
+                                        Object.values(roomShapes).map(shape => (
+                                            <option key={shape} value={shape}>shape: {shape}</option>
+                                        ))
+                                    }
+                                </select>
                             </>
                         }
                         {

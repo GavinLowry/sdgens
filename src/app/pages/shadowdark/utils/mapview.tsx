@@ -131,22 +131,20 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
             const center = mapToScreenPoint(room.location);
             const lineHeight = 15;
             const cursor = { ...center }
-
-            ctx.font = "15px Arial";
             cursor.y -= lineHeight * 2;
-            ctx.fillText(`${room.featureIndex}`, cursor.x, cursor.y);
 
             const maxWidth = 10;
 
             const titleAry = breakText(room.title, maxWidth);
+            ctx.font = "bold 13px Arial";
             titleAry.forEach(word => {
                 cursor.y += lineHeight
                 ctx.fillText(word, cursor.x, cursor.y);
             })
 
             if (room.description) {
-                ctx.font = "12px Arial";
                 const descAry = breakText(room.description, maxWidth);
+                ctx.font = "11px Arial";
                 descAry.forEach(word => {
                     ctx.fillText(word, cursor.x, cursor.y + 15);
                     cursor.y += lineHeight
@@ -206,8 +204,16 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         ctx.beginPath();
 
         switch(room.shape) {
-            case 'square': drawSquareRoom(ctr, rad); break;
-            case 'hex': drawHexRoom(ctr, rad); break;
+            case 'tri': drawPolyRoom(ctr, rad, 3, "half"); break;
+            case 'tri2': drawPolyRoom(ctr, rad, 3, "minus-half"); break;
+            case 'diamond': drawPolyRoom(ctr, rad, 4); break;
+            case 'square': drawPolyRoom(ctr, rad, 4, "rotate"); break;
+            case 'penta': drawPolyRoom(ctr, rad, 5, "half"); break;
+            case 'penta2': drawPolyRoom(ctr, rad, 5, "minus-half"); break;
+            case 'hex': drawPolyRoom(ctr, rad, 6); break;
+            case 'hex2': drawPolyRoom(ctr, rad, 6, "rotate"); break;
+            case 'octa': drawPolyRoom(ctr, rad, 8); break;
+            case 'octa2': drawPolyRoom(ctr, rad, 8, "rotate"); break;
             default: drawRoundRoom(ctr, rad); break;
         }
 
@@ -221,10 +227,16 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         ctx.restore();
     }
 
-    function drawHexRoom(ctr: Point, rad: number) {
+    function drawPolyRoom(ctr: Point, rad: number, sides: number, rotate?: string): void {
         if (!ctx) { return; }
-        for (let i=0; i<6; ++i) {
-            const angle = Math.PI / 3 * i;
+        for (let i=0; i<sides; ++i) {
+            let angle = Math.PI / (sides/2) * i;
+            if (rotate) {
+                let rotation = Math.PI/sides;
+                if (rotate === "half") { rotation /= 2; }
+                else if (rotate === "minus-half") { rotation = -rotation / 2; }
+                angle += rotation;
+            }
             const corner: Point = {
                 x: ctr.x + Math.cos(-angle) * rad,
                 y: ctr.y + Math.sin(-angle) * rad
@@ -236,15 +248,6 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
                 ctx.lineTo(corner.x, corner.y);
             }
         }
-        ctx.closePath();
-    }
-
-    function drawSquareRoom(ctr: Point, rad: number) {
-        if (!ctx) { return; }
-        ctx.moveTo(ctr.x - rad, ctr.y - rad);
-        ctx.lineTo(ctr.x + rad, ctr.y - rad);
-        ctx.lineTo(ctr.x + rad, ctr.y + rad);
-        ctx.lineTo(ctr.x - rad, ctr.y + rad);
         ctx.closePath();
     }
 

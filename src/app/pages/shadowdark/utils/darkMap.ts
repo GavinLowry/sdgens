@@ -155,15 +155,11 @@ export default class DarkMap {
         return data;
     }
 
-    static changeRoomShape(mapData: MapData, id: number): MapData | undefined {
+    static setRoomShape(mapData: MapData, id: number, shape: string): MapData {
         const data = { ...mapData };
-        const room = this.getRoom(mapData, id);
-        if (!room) { return; }
-        const shape = room.shape ?? roomShapes.ROUND;
-        const shapes = Object.values(roomShapes);
-        let shapeIdx = shapes.indexOf(shape) + 1;
-        if (shapeIdx >= shapes.length) { shapeIdx = 0; }
-        room.shape = shapes[shapeIdx];
+        const room = this.getRoom(data, id);
+        if (!room) { return data; }
+        room.shape = shape;
         data.rooms = [
             ...data.rooms.filter(r => r.id !== room.id),
             room
@@ -180,6 +176,14 @@ export const objectTypes = {
 
 export const roomShapes = {
     ROUND: "round",
+    TRI: "tri",
+    TRI2: "tri2",
     SQUARE: "square",
+    DIAMOND: "diamond",
+    PENTA: "penta",
+    PENTA2: "penta2",
     HEX: "hex",
+    HEX2: "hex2",
+    OCTA: "octa",
+    OCTA2: "octa2",
 };
