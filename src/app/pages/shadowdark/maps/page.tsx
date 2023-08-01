@@ -225,6 +225,24 @@ export default function Maps() {
         setMapData(data);
         setMapChanged(true);
     }
+    
+    function changeStairs() {
+        if (!mapData || !selectedObject || selectedObject.type !== objectTypes.HALL) { return; }
+        const hall = selectedObject as HallData;
+        if (!hall.stairs) { hall.stairs = "up"; }
+        else if (hall.stairs === "up") { hall.stairs = "down"; }
+        else if (hall.stairs === "down") { hall.stairs = undefined; }
+        const halls = [
+            ...mapData.halls.filter(h => h.id !== selectedObject.id),
+            hall,
+        ];
+        const data = {
+            ...mapData,
+            halls,
+        }
+        setMapData(data);
+        setMapChanged(true);
+    }
 
     return (
         <div className="mp-column-container">
@@ -282,6 +300,9 @@ export default function Maps() {
                                 <button onClick={removeHall}>remove hall</button>
                                 <button onClick={wideHall}>wide</button>
                                 <button onClick={narrowHall}>narrow</button>
+                                <button onClick={changeStairs}>
+                                    {(selectedObject as HallData).stairs ?? "no"} stairs
+                                </button>
                             </>
                         }
                     </div>

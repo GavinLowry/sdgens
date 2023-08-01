@@ -20,6 +20,7 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- dark map: draw stairs
 - dark map: hall width
 - dark map: room sizes
 - dark map: room shapes

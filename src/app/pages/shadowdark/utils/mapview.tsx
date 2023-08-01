@@ -23,7 +23,8 @@ export interface RoomData extends MapObjectData {
 
 export interface HallData extends MapObjectData {
     rooms: number[];
-    width: number;
+    width?: number;
+    stairs?: string; // up or down
 }
 
 interface ScreenPoint {
@@ -194,6 +195,45 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         ctx.lineWidth = secondPass ? hallWidth : hallWidth + 20;
         ctx.stroke();
         ctx.restore();
+
+        if (secondPass) {
+            drawStairs(hall);
+        }
+    }
+
+    function drawStairs(hall: HallData): void  {
+        if (!ctx || !hall || !mapData) { return; }
+        if (!hall.stairs) { return; }
+        const topIndex = hall.stairs === "down" ? hall.rooms[0] : hall.rooms[1];
+        const bottomIndex = hall.stairs === "down" ? hall.rooms[1] : hall.rooms[0];
+        const topRoom = mapData.rooms.find(r => r.id === topIndex);
+        const bottomRoom = mapData.rooms.find(r => r.id === bottomIndex);
+        console.log({topRoom,bottomRoom})
+        if (!topRoom || !bottomRoom) { return; }
+        const top = mapToScreenPoint({ ...topRoom.location });
+        const bottom = mapToScreenPoint({ ...bottomRoom.location });
+        const segments = 10;
+        const crunch = 1/3;
+        const dx = (bottom.x - top.x) / segments * crunch;
+        const dy = (bottom.y - top.y) / segments * crunch;
+        const width = hall.width ?? 20;
+        ctx.save();
+        ctx.strokeStyle = 'darkgray';
+        ctx.setLineDash([2, 4]);
+        for (let i=0; i<segments; ++i) {
+            ctx.beginPath();
+            ctx.moveTo(
+                top.x + dx * i + (dx * segments * (1 - crunch/2)),
+                top.y + dy * i + (dy * segments * (1 - crunch/2))
+            );
+            ctx.lineTo(
+                top.x + dx * (i + 1) + (dx * segments * (1 - crunch/2)),
+                top.y + dy * (i + 1) + (dy * segments * (1 - crunch/2))
+            );
+            ctx.lineWidth = width * (1 - i / segments);
+            ctx.stroke();
+        }
+        ctx.restore();
     }
 
     function drawRoom(room: RoomData, secondPass: boolean) {
@@ -203,7 +243,7 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         if (!secondPass) {
             screenPoints.push({location: ctr, object: room});
         }
-        const storedRadius = room.radius ? room.radius / 10 : roomRadius;
+        const storedRadius = room.radius ? room.radius / 20 : roomRadius;
         const rad = mapToScreenLength(storedRadius);
         ctx.save();
         ctx.beginPath();
@@ -246,7 +286,6 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
                 x: ctr.x + Math.cos(-angle) * rad,
                 y: ctr.y + Math.sin(-angle) * rad
             };
-            console.log({corner});
             if (i === 0) {
                 ctx.moveTo(corner.x, corner.y);
             } else {
