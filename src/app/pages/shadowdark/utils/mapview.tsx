@@ -20,6 +20,7 @@ export interface RoomData extends MapObjectData {
     featureIndex?: number;
     shape?: string;
     radius?: number;
+    flag?: {angle: number, message: string};
 }
 
 export interface HallData extends MapObjectData {
@@ -288,6 +289,40 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
         ctx.fill();
         ctx.stroke();
         ctx.restore();
+        if (room.flag) {
+            drawFlag(ctr, rad, room.flag.angle, room.flag.message);
+        }
+    }
+
+    function drawText(message: string, where: Point) {
+        if (!ctx) { return; }
+        ctx.strokeStyle = 'white';
+        ctx.fillStyle = 'black';
+        ctx.lineWidth = 4;
+        ctx.font = "bold 13px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.strokeText(message, where.x, where.y);
+        ctx.fillText(message, where.x, where.y);
+    }
+
+    function drawFlag(onScreenCenter: Point, onScreenRadius: number, angle: number, message: string): void {
+        if (!ctx) { return; }
+
+        const radians = -angle / 180 * Math.PI;
+        const innerPoint = polarToCartesian(onScreenCenter, radians, onScreenRadius * 4/5);
+        const outerPoint = polarToCartesian(onScreenCenter, radians, onScreenRadius * 8/5);
+        const textPoint = polarToCartesian(onScreenCenter, radians, onScreenRadius * 10/5);
+        ctx.save();
+        ctx.lineCap = "round";
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = "orange";
+        ctx.beginPath();
+        ctx.moveTo(innerPoint.x, innerPoint.y);
+        ctx.lineTo(outerPoint.x, outerPoint.y);
+        ctx.stroke();
+        drawText(message, textPoint);
+        ctx.restore();
     }
 
     function drawPolyRoom(ctr: Point, rad: number, sides: number, rotate?: string): void {
@@ -360,6 +395,13 @@ export default function MapView({ mapData, onClick }: MapViewApps) {
     return (
         <canvas id="viewer" width={width} height={height} />
     );
+}
+
+function polarToCartesian (center: Point, angle: number, radius: number): Point {
+    return {
+        x: center.x + radius * Math.cos(angle),
+        y: center.y + radius * Math.sin(angle)
+    };
 }
 
 function getFloorColor(obj: MapObjectData): string {

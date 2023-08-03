@@ -19,6 +19,8 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
     const [editTitle, setEditTitle] = useState<string>("");
     const [editDescription, setEditDescription] = useState<string>("");
     const [editRadius, setEditRadius] = useState<string>("");
+    const [editFlagMessage, setEditFlagMessage] = useState<string>("");
+    const [editFlagAngle, setEditFlagAngle] = useState<string>("");
 
     useEffect(() => {
         const room = DarkMap.getRoom(mapData, roomId);
@@ -27,6 +29,10 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
             setEditTitle(room.title);
             setEditDescription(room.description ?? "");
             setEditRadius(`${room.radius || 7}`);
+            if (room.flag) {
+                setEditFlagAngle(`${room.flag.angle}`);
+                setEditFlagMessage(room.flag.message);
+            }
         }
     }, [roomId])
 
@@ -45,12 +51,25 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
         setEditRadius(target.value);
     }
 
+    function onChangeEditFlagMessage(event: ChangeEvent<HTMLInputElement>) {
+        const {value} = event.target;
+        setEditFlagMessage(value);
+    }
+
+    function onChangeEditFlagAngle(event: ChangeEvent<HTMLInputElement>) {
+        const {value} = event.target;
+        setEditFlagAngle(value);
+    }
+
     function onSubmitEditRoom(): void {
         const newRoom: RoomData = {
             ...editRoom as RoomData,
             title: editTitle ?? "",
             description: editDescription ?? "",
             radius: parseInt(editRadius ?? "0"),
+            flag: (editFlagMessage && editFlagAngle)
+                ? {message: editFlagMessage, angle: parseInt(editFlagAngle)}
+                : undefined,
         };
         onSubmit(newRoom);
     }
@@ -85,6 +104,15 @@ export default function EditRoomModal({roomId, mapData, onSubmit, onCancel}: Edi
                 <div>
                     <label htmlFor='radius'>Radius</label>
                     <input type="text" name="radius" value={editRadius} onChange={onChangeEditRadius} />
+                </div>
+
+                <div>
+                    <label htmlFor='flagMessage'>flagMessage</label>
+                    <input type="text" name="flagMessage" value={editFlagMessage} onChange={onChangeEditFlagMessage} />
+                </div>
+                <div>
+                    <label htmlFor='flagAngle'>flagAngle</label>
+                    <input type="text" name="flagAngle" value={editFlagAngle} onChange={onChangeEditFlagAngle} />
                 </div>
             </div>
             <div className="sd-control-row">

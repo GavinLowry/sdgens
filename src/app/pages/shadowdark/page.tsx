@@ -5,7 +5,7 @@ export default function Shadowdark() {
             <h3>Shadowdark</h3>
             <p>
                 I recently discovered the
-                <a href="https://www.thearcanelibrary.com/pages/shadowdark">
+                <a href="https://www.thearcanelibrary.com/pages/shadowdark" target="_blank">
                     Shadowdark
                 </a>
                 tabletop roleplaying game

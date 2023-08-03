@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <span>
-        This is just a repository for randomm code ideas.
+        This is just a repository for random code ideas.
       </span>
     </main>
   )

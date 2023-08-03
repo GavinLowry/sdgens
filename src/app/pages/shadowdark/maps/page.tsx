@@ -303,7 +303,7 @@ export default function Maps() {
                             selectedObject && selectedObject.type === objectTypes.ROOM &&
                             <>
                                 <button onClick={onConnectCommand}>connect</button>
-                                <button onClick={editRoom}>edit features</button>
+                                <button onClick={editRoom}>edit</button>
                                 <select onChange={onChangeShape} value={getRoomShape()}>
                                     {
                                         Object.values(roomShapes).map(shape => (
