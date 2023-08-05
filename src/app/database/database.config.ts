@@ -17,6 +17,7 @@ database.version(7).stores({
 	maps: '++id, projectId, name',
 	landMaps: '++id, projectId, name',
 	character: '++id, projectId, name',
+	// items : '++id, projectId, type', ...and array of string for the item itself
 });
 
 export const projectTable = database.table('projects');

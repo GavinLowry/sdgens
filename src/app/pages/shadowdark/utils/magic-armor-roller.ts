@@ -1,4 +1,4 @@
-import { RandomTableGroup, RandomTableObject, magicArmor, itemPersonality } from '@/app/pages/shadowdark/random-tables/data';
+import { magicArmor, itemPersonality } from '@/app/pages/shadowdark/random-tables/data';
 import { generateName, roll, rollDice } from '@/app/pages/shadowdark/utils/random';
 import TableRoller from '@/app/pages/shadowdark/utils/table-roller';
 
@@ -13,42 +13,37 @@ export default class MagicArmorRoller {
 
     rollGroup () {
         const bonus = this.rollBonus();
-        const bonusString = bonus ? `+${bonus} ` : '';
-        const armorType = this.rollType();
-        const firstLine = `${bonusString}${armorType}`;
+        const itemType = this.rollType();
+        const firstLine = `${bonus && `${bonus} `}${itemType}`;
+
+        console.log({firstLine});
 
         const personalities: string[] = [];
         const personality = this.rollPersonality();
         personality.forEach(p => personalities.push(p));
-
-        const features: string[] = [];
-        const feature = this.rollFeature();
-        if (feature) { features.push(feature); }
 
         const qualities = this.rollQualities();
 
         const result: string[] = [
             firstLine,
             ...personalities,
-            ...features,
             ...qualities,
         ];
-
-        console.log({result})
 
         return result;
     }
 
-    rollBonus (): number {
-        const bonusRoll = rollDice("2d6");
-        const bonus = bonusRoll === 12 ? 3 : bonusRoll > 8 ? 2 : bonusRoll > 5 ? 1 : 0;
+    rollBonus (): string {
+        this.roller.setSelection("item bonus");
+        const bonus = this.roller.rollGroup()[0];
+        console.log({bonus})
         return bonus;
     }
 
     rollType (): string {
-        this.roller.setSelection("armor type");
-        let armorType = this.roller.rollGroup()[0];
-        if (armorType === "Mithral") {
+        this.roller.setSelection("item type");
+        let itemType = this.roller.rollGroup()[0];
+        if (itemType === "Mithral") {
             let subtype: string | undefined;
             while (!subtype) {
                 const t = this.roller.rollGroup()[0];
@@ -56,21 +51,20 @@ export default class MagicArmorRoller {
                     subtype = t;
                 }
             }
-            armorType = `${armorType} ${subtype}`;
+            itemType = `${itemType} ${subtype}`;
         }
-        return armorType;
+        console.log({itemType})
+        return itemType;
     }
 
-    rollFeature (): string | undefined {
-        const oneOfThree = roll(1,3);
-        if (oneOfThree > 1) { return; }
-        this.roller.setSelection("armor feature");
+    rollFeature (): string {
+        this.roller.setSelection("feature");
         return this.roller.rollGroup()[0];
     }
 
     rollQualities (): string[] {
         const qualities = [];
-        this.roller.setSelection("armor benefit");
+        this.roller.setSelection("benefit");
         const benefitRoll = rollDice("2d6");
         const benefits = benefitRoll < 4 ? 0 : benefitRoll < 12 ? 1 : 2;
         for (let i=0; i<benefits; ++i) {
@@ -79,7 +73,7 @@ export default class MagicArmorRoller {
         const curseRoll = rollDice("2d6");
         const curses = curseRoll < 8 ? 1 : 0;
         if (curses) {
-            this.roller.setSelection("armor curse");
+            this.roller.setSelection("curse");
             qualities.push(this.roller.rollGroup()[0]);
         }
         return qualities;
@@ -100,17 +94,18 @@ export default class MagicArmorRoller {
             personality.push(this.personalityRoller.rollGroup()[0]);
         }
         if (personality.length > 0) {
+            const feature = this.rollFeature();
             this.personalityRoller.setSelection("personality trait");
             const trait = this.personalityRoller.rollGroup()[0];
             this.personalityRoller.setSelection("alignment");
             const alignment = this.personalityRoller.rollGroup()[0];
             personality = [
                 `"${generateName(false)}"`,
+                feature,
                 `${alignment}, ${trait}`,
                 ...personality
             ];
         }
         return personality;
     }
-
 }

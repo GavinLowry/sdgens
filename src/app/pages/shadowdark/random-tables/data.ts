@@ -540,7 +540,7 @@ export const magicArmor: RandomTableGroup = {
     options: { separate: "controlled" },
     tables: [
         {
-            field: "armor type",
+            field: "item type",
             die: "2d6",
             table: [
                 {roll: "2-5", value: "Leather"},
@@ -551,17 +551,17 @@ export const magicArmor: RandomTableGroup = {
             ],
         },
         {
-            field: "armor bonus",
+            field: "item bonus",
             die: "2d6",
             table: [
-                {roll: "2-5", value: "0"},
-                {roll: "6-8", value: "1"},
-                {roll: "9-11", value: "2"},
-                {roll: "12-12", value: "3"},
+                {roll: "2-5", value: ""},
+                {roll: "6-8", value: "+1"},
+                {roll: "9-11", value: "+2"},
+                {roll: "12-12", value: "+3"},
             ],
         },
         {
-            field: "armor feature",
+            field: "feature",
             die: "d20",
             table: [
                 {roll: "1", value: "Demonic horned face"},
@@ -587,7 +587,7 @@ export const magicArmor: RandomTableGroup = {
             ],
         },
         {
-            field: "armor benefit",
+            field: "benefit",
             die: "d12",
             table: [
                 {roll: "1", value: "Once per day, deflect a ranged attack that would hit you"},
@@ -605,7 +605,7 @@ export const magicArmor: RandomTableGroup = {
             ],
         },
         {
-            field: "armor curse",
+            field: "curse",
             die: "d12",
             table: [
                 {roll: "1", value: "You take 2d10 damage if you remove this armor"},
@@ -715,6 +715,114 @@ export const itemPersonality: RandomTableGroup = {
         },
     ],
 };
+
+export const magicWeapon: RandomTableGroup = {
+    name: "Magic Weapon",
+    category: "loot",
+    options: { separate: "controlled" },
+    tables: [
+        {
+            field: "item type",
+            die: "d20",
+            table: [
+                {roll: "1", value: "Arrows (2d6)"},
+                {roll: "2-3", value: "Bastard sword"},
+                {roll: "4", value: "Club"},
+                {roll: "5", value: "Crossbow"},
+                {roll: "6", value: "Crossbow bolts (2d6)"},
+                {roll: "7-8", value: "Dagger"},
+                {roll: "9", value: "Greataxe"},
+                {roll: "10", value: "Greatsword"},
+                {roll: "11", value: "Javelin"},
+                {roll: "12", value: "Longbow"},
+                {roll: "13-14", value: "Longsword"},
+                {roll: "15", value: "Mace"},
+                {roll: "16", value: "Shortbow"},
+                {roll: "17-18", value: "Shortsword"},
+                {roll: "19", value: "Staff"},
+                {roll: "20", value: "Warhammer"},
+            ],
+        },
+        {
+            field: "item bonus",
+            die: "2d6",
+            table: [
+                {roll: "2-3", value: "+0"},
+                {roll: "4-9", value: "+1"},
+                {roll: "10-11", value: "+2"},
+                {roll: "12", value: "+3"},
+            ],
+        },
+        {
+            field: "feature",
+            die: "d20",
+            table: [
+                {roll: "1", value: "Trails sparkles"},
+                {roll: "2", value: "Starmetal"},
+                {roll: "3", value: "Rusted and chipped"},
+                {roll: "4", value: "Gem in pommel/handle"},
+                {roll: "5", value: "Drips green ichor"},
+                {roll: "6", value: "Moon motif and silvered"},
+                {roll: "7", value: "Galaxies swirl on surface"},
+                {roll: "8", value: "Ironwood"},
+                {roll: "9", value: "Rune-scribed"},
+                {roll: "10", value: "Faint, ghostly aura"},
+                {roll: "11", value: "Inlaid with gold"},
+                {roll: "12", value: "Trails incense"},
+                {roll: "13", value: "Studded with gemstones"},
+                {roll: "14", value: "Sparks dance on surface"},
+                {roll: "15", value: "Shaped like an animal"},
+                {roll: "16", value: "Carved from granite"},
+                {roll: "17", value: "Dragonbone hardware"},
+                {roll: "18", value: "Whispers in a language"},
+                {roll: "19", value: "Drips ocean water"},
+                {roll: "20", value: "Turns blood to rose petals"},
+            ],
+        },
+        {
+            field: "benefit",
+            die: "d12",
+            table: [
+                {roll: "1", value: "Cut or smash through any material"},
+                {roll: "2", value: "Once per day, ignites for 5 rounds, deals 1d4 extra damage"},
+                {roll: "3", value: "DC 15 CHA check to command a wild animal within far"},
+                {roll: "4", value: "Behead the enemy on a critical hit"},
+                {roll: "5", value: "When you hit a creature, learn its True Name (see pg. 319)"},
+                {roll: "6", value: "Shoot a bolt of energy near with DEX, 1d6 damage"},
+                {roll: "7", value: "Once per day, deflect a melee attack that would hit you"},
+                {roll: "8", value: "Regain 1d6 hit points when you slay a creature"},
+                {roll: "9", value: "You have advantage on initiative rolls"},
+                {roll: "10", value: "Has thrown property (pg. 37), near distance, returns to you"},
+                {roll: "11", value: "Double damage to 1d4: 1-2. undead, 3. demons, 4. dragons"},
+                {roll: "12", value: "Reroll natural 1s once each when attacking with this weapon"},
+            ],
+        },
+        {
+            field: "curse",
+            die: "d12",
+            table: [
+                {roll: "1", value: "You can't see 1d4: 1. undead, 2. demons, 3. snakes, 4. spiders"},
+                {roll: "2", value: "You are compelled to swallow all gemstones at first sight"},
+                {roll: "3", value: "Burn a straw doll daily or weapon temporarily loses magic"},
+                {roll: "4", value: "Any light source you hold immediately extinguishes"},
+                {roll: "5", value: "You must loudly praise a god whenever you see its symbol"},
+                {roll: "6", value: "Venomous creatures always target you with attacks"},
+                {roll: "7", value: "You turn into a rat every day at midnight for one hour"},
+                {roll: "8", value: "Your checks to swim are always extreme (DC 18)"},
+                {roll: "9", value: "You are burned by the touch of gold"},
+                {roll: "10", value: "Bathe weapon in blood daily or it temporarily loses its magic"},
+                {roll: "11", value: "You cannot wear armor while wielding this weapon"},
+                {roll: "12", value: "Weapon can possess you by winning contested CHA (+2)"},
+            ],
+        },
+    ],
+};
+
+
+
+
+
+
 
 
 

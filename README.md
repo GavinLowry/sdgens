@@ -7,7 +7,8 @@ npm run dev
 
 
 TODO:
-- standard random table objects
+- standard random table objects (ongoing)
+- save random table object to db, support edit and added notes field, and allow delete from db
 
 - dark map: support longer room description for popup when user clicks "?" button
 - dark map: hover-able icons: sound, smell, feel(wind, cold, heat, etc.) to easily emanate beyond room
