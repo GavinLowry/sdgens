@@ -12,9 +12,11 @@ export interface RandomTableObject {
     table: RandomTableEntry[],
 }
 
+export type TableCategory = "encounter" | "feature" | "loot";
+
 export interface RandomTableGroup {
     name: string;
-    category: string;
+    category: TableCategory;
     options?: {
         separate?: "select" | "random",
     };
@@ -531,6 +533,187 @@ export const treasure: RandomTableGroup = {
     ],
 };
 
+export const magicArmor: RandomTableGroup = {
+    name: "Magic Armor",
+    category: "loot",
+    options: { separate: "select" },
+    tables: [
+        {
+            field: "armor type",
+            die: "2d6",
+            table: [
+                {roll: "2-5", value: "Leather"},
+                {roll: "6-7", value: "Chainmail"},
+                {roll: "8-9", value: "Shield"},
+                {roll: "10-11", value: "Plate mail"},
+                {roll: "12", value: "Mithral"}, // reroll for type
+            ],
+        },
+        {
+            field: "armor bonus",
+            die: "2d6",
+            table: [
+                {roll: "2-5", value: "0"},
+                {roll: "6-8", value: "1"},
+                {roll: "9-11", value: "2"},
+                {roll: "12-12", value: "3"},
+            ],
+        },
+        {
+            field: "armor feature",
+            die: "d20",
+            table: [
+                {roll: "1", value: "Demonic horned face"},
+                {roll: "2", value: "Oak leaf motif"},
+                {roll: "3", value: "Studded with shark teeth"},
+                {roll: "4", value: "Dragon scales"},
+                {roll: "5", value: "Bone or metal spikes"},
+                {roll: "6", value: "Faint arcane runes"},
+                {roll: "7", value: "Turtle shell plating"},
+                {roll: "8", value: "Made of scorpion chitin"},
+                {roll: "9", value: "Gilded metal/gold thread"},
+                {roll: "10", value: "Scorched, smells burned"},
+                {roll: "11", value: "Pearl-white fish scales"},
+                {roll: "12", value: "Oozes blood"},
+                {roll: "13", value: "Festooned with fungi"},
+                {roll: "14", value: "Distant sound of ocean"},
+                {roll: "15", value: "Set with crystals"},
+                {roll: "16", value: "Draped in holy symbols"},
+                {roll: "17", value: "Exudes tree sap"},
+                {roll: "18", value: "Blurry, indistinct edges"},
+                {roll: "19", value: "Large golden cat eye"},
+                {roll: "20", value: "Covered in frost"},
+            ],
+        },
+        {
+            field: "armor benefit",
+            die: "d12",
+            table: [
+                {roll: "1", value: "Once per day, deflect a ranged attack that would hit you"},
+                {roll: "2", value: "Checks to stabilize you are easy (DC 9)"},
+                {roll: "3", value: "You cannot be knocked over while you are conscious"},
+                {roll: "4", value: "Undetected creatures do not have advantage to attack you"},
+                {roll: "5", value: "You know Diabolic and are immune to fire, lava, and magma"},
+                {roll: "6", value: "You are immune to the curses of one item you choose"},
+                {roll: "7", value: "Once per day, gain advantage on all attacks for 3 rounds"},
+                {roll: "8", value: "You have a +4 bonus to your death timers"},
+                {roll: "9", value: "Gain immunity to a poison after suffering its effects once"},
+                {roll: "10", value: "You know Celestial and can fly for 3 rounds once per day"},
+                {roll: "11", value: "Treat critical hits against you as normal hits"},
+                {roll: "12", value: "Ignore any damage dealt to you of 3 points or below"},
+            ],
+        },
+        {
+            field: "armor curse",
+            die: "d12",
+            table: [
+                {roll: "1", value: "You take 2d10 damage if you remove this armor"},
+                {roll: "2", value: "Your party cannot add CHA bonuses to reaction checks"},
+                {roll: "3", value: "Mounts fear you and will not allow you to ride them"},
+                {roll: "4", value: "DC 15 WIS first round of combat or attack nearest creature"},
+                {roll: "5", value: "You take double damage from blunt/bludgeoning weapons"},
+                {roll: "6", value: "Armor uses 5 gear slots and is extremely loud and clunky"},
+                {roll: "7", value: "Ranged attacks against you have advantage"},
+                {roll: "8", value: "Treat a natural 1 attack roll against you as a critical hit"},
+                {roll: "9", value: "Beneficial spells that target you are hard to cast (DC 15)"},
+                {roll: "10", value: "You have disadvantage on Dexterity checks"},
+                {roll: "11", value: "There's a secret 1-in-6 chance each NPC ally will betray you"},
+                {roll: "12", value: "You take double damage from silvered weapons"},
+            ],
+        },
+    ],
+};
+
+export const itemPersonality: RandomTableGroup = {
+    name: "Item Personality",
+    category: "loot",
+    options: { separate: "select" },
+    tables: [
+        {
+            field: "item virtue",
+            die: "d20",
+            table: [
+                {roll: "1", value: "Insists on protecting people and creatures it likes"},
+                {roll: "2", value: "Warns its wielder if it senses impending danger"},
+                {roll: "3", value: "Gladly translates Primordial for its wielder"},
+                {roll: "4", value: "Senses hiding creatures within near, but not exact place"},
+                {roll: "5", value: "Owed a favor by a 1d4: 1-2. unicorn, 3. dragon, 4. noble"},
+                {roll: "6", value: "Commands the respect of the followers of a god"},
+                {roll: "7", value: "Occasionally remembers useful ancient history"},
+                {roll: "8", value: "Imparts pleasant dreams and good sleep to its wielder"},
+                {roll: "9", value: "Coaches its wielder on the right things to say in a situation"},
+                {roll: "10", value: "Sometimes provides helpful strategic advice"},
+                {roll: "11", value: "Occasionally notices important details others have missed"},
+                {roll: "12", value: "Tries to mediate disagreements between conscious items"},
+                {roll: "13", value: "Calming presence to 1d4: 1. dogs, 2. horses, 3. cats, 4. birds"},
+                {roll: "14", value: "Has an extremely acute sense of smell"},
+                {roll: "15", value: "Knows the direction of the nearest running water"},
+                {roll: "16", value: "Lawful, intimidating to chaotic creatures"},
+                {roll: "17", value: "Neutral, intimidating to lawful and chaotic creatures"},
+                {roll: "18", value: "Chaotic, intimidating to lawful creatures"},
+                {roll: "19", value: "Has legitimate prophecies but isn't sure of their meaning"},
+                {roll: "20", value: "Can undo a great 1d4: 1. evil, 2. lie, 3. spell, 4. alliance"},
+            ],
+        },
+        {
+            field: "item flaw",
+            die: "d20",
+            table: [
+                {roll: "1", value: "Afraid of 1d4: 1. the dark, 2. vermin, 3. heights, 4. water"},
+                {roll: "2", value: "Preferred a past owner and always draws comparisons"},
+                {roll: "3", value: "Chatters while wielder is trying to concentrate"},
+                {roll: "4", value: "Dislikes 1d4: 1. elves, 2. dwarves, 3. humans, 4. goblins"},
+                {roll: "5", value: "Tries to get wielder into fights so it \"has something to do\""},
+                {roll: "6", value: "Does not want to be separated from wielder for any reason"},
+                {roll: "7", value: "Objects to 1d4: 1. gambling, 2. carousing, 3. stealth, 4. theft"},
+                {roll: "8", value: "Accuses everyone of lying; is correct once in a while"},
+                {roll: "9", value: "Won't harm 1d4: 1-2. lawful, 3. neutral, 4. chaotic creatures"},
+                {roll: "10", value: "Believes its wielder is a pawn in its apocalyptic scheme"},
+                {roll: "11", value: "Constantly tries to escape its current wielder"},
+                {roll: "12", value: "Demands its wielder observe its god's strict rituals"},
+                {roll: "13", value: "Insists on being reunited with its creator, living or dead"},
+                {roll: "14", value: "Can't stand other conscious magic items"},
+                {roll: "15", value: "Refuses to be used for \"unimportant\" or \"boring\" tasks"},
+                {roll: "16", value: "Purposefully goes magically inert when mad at its wielder"},
+                {roll: "17", value: "Insists on being meticulously cleaned every day"},
+                {roll: "18", value: "Loves the color purple and despises all other colors"},
+                {roll: "19", value: "Objects to 1d4: 1. negotiating, 2-3. fighting, 4. planning"},
+                {roll: "20", value: "Pretends to know information it doesn't know"},
+            ],
+        },
+        {
+            field: "personality trait",
+            die: "d16",
+            table: [
+                {roll: "1", value: "Imperious"},
+                {roll: "2", value: "Polite"},
+                {roll: "3", value: "Puritanical"},
+                {roll: "4", value: "Charming"},
+                {roll: "5", value: "Anxious"},
+                {roll: "6", value: "Righteous"},
+                {roll: "7", value: "Critical"},
+                {roll: "8", value: "Theatrical"},
+                {roll: "9", value: "Bossy"},
+                {roll: "10", value: "Noble"},
+                {roll: "11", value: "Greedy"},
+                {roll: "12", value: "Protective"},
+                {roll: "13", value: "Impulsive"},
+                {roll: "14", value: "Brave"},
+                {roll: "15", value: "Vicious"},
+                {roll: "16", value: "Loyal"},
+            ],
+        },
+        {
+            field: "alignment",
+            die: "d3",
+            table: [
+                {roll: "1", value: "lawful"},
+                {roll: "2", value: "neutral"},
+                {roll: "3", value: "chaotic"},
+            ],
+        },
+    ],
+};
 
 
 

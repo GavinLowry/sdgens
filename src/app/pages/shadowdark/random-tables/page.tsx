@@ -1,8 +1,11 @@
 'use client'
 
 import { ReactNode, useEffect, useState } from 'react';
-import { RandomTableGroup, monsterGenerator, encounterDisposition, traps, hazards, treasure } from "./data";
+import {
+    RandomTableGroup, monsterGenerator, encounterDisposition, traps, hazards, treasure, magicArmor
+} from "./data";
 import TableRoller from '../utils/table-roller';
+import MagicArmorRoller from '../utils/magic-armor-roller';
 
 import "./random-tables.css";
 
@@ -15,7 +18,7 @@ function RandomTables () {
 
     useEffect(() => {
         const groups: RandomTableGroup[] = [
-            monsterGenerator, encounterDisposition, traps, hazards, treasure
+            monsterGenerator, encounterDisposition, traps, hazards, treasure, magicArmor
         ];
         setGroups(groups);
     }, []);
@@ -39,7 +42,12 @@ function RandomTables () {
 
     function rollRoller () {
         if (!group) { return; }
-        const roller = new TableRoller(group);
+        let roller: any;
+        if (group.name === "Magic Armor") {
+            roller = new MagicArmorRoller();
+        } else {
+            roller = new TableRoller(group);
+        }
         const result = roller.rollGroup();
         setRollerResult([
             group.name,

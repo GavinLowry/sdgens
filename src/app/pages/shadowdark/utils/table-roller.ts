@@ -1,5 +1,5 @@
 import { RandomTableGroup, RandomTableObject } from '@/app/pages/shadowdark/random-tables/data';
-import { roll } from '@/app/pages/shadowdark/utils/random';
+import { roll, rollDice } from '@/app/pages/shadowdark/utils/random';
 
 export default class TableRoller {
     tableGroup: RandomTableGroup;
@@ -42,34 +42,9 @@ export default class TableRoller {
     }
     
     rollTable(table: RandomTableObject): string {
-        const dice = this.dieStringToDiceObject(table.die);
-        const diceRoll = this.rollDice(dice);
+        const diceRoll = rollDice(table.die);
         const entry = table.table.find(e => this.stringToNumArray(e.roll).includes(diceRoll));
         return entry?.value ?? '';
-    }
-
-    rollDice(dice: DiceObject): number {
-        let dieRoll = 0;
-        for(let i=0; i<dice.count; ++i) {
-            dieRoll += roll(1, dice.size);
-        }
-        return dieRoll;
-    }
-
-    dieStringToDiceObject(die: string): DiceObject {
-        const dIndex = die.indexOf("d");
-        if (dIndex === 0) {
-            return {
-                count: 1,
-                size: parseInt(die.substring(dIndex+1))
-            };
-        } else {
-            const dieArray = die.split("d").map(d => parseInt(d));
-            return {
-                count: dieArray[0],
-                size: dieArray[1]
-            }
-        }
     }
 
     stringToNumArray(original: string): number[] {
@@ -106,9 +81,4 @@ export default class TableRoller {
         return [parseInt(original)];
     }
 
-}
-
-interface DiceObject {
-    count: number;
-    size: number;
 }

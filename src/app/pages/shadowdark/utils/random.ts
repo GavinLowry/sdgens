@@ -8,7 +8,7 @@ export function chooseRandom(options: string[]): string {
 	return options[roll(0,options.length-1)];
 }
 
-export function generateName() {
+export function generateName(addLastName: boolean = true) {
 	const nameParts = {
 		start: ['Bar','Bra','Brae','Brig','Bro','Den','Eg','El','Eu','Gant','Gin','He','Jor','Ka','Ol','Or','Pike','Ri','Sar','Tor','Tro','Yor','Zor'],
 		middle: ['ge','phy','seb','tri'],
@@ -28,7 +28,35 @@ export function generateName() {
 	const surnameMid = roll(1,3) === 1 ? chooseRandom(surnameParts.middle) : '';
 	const surnameEnd = chooseRandom(surnameParts.end)
 	const surname = `${surnameStart}${surnameMid}${surnameEnd}`;
-	return `${name} ${surname}`;
+	return addLastName ? `${name} ${surname}` : name;
 }
 
+export function rollDice(die: string): number {
+	const dice = dieStringToDiceObject(die)
+	let dieRoll = 0;
+	for(let i=0; i<dice.count; ++i) {
+		dieRoll += roll(1, dice.size);
+	}
+	return dieRoll;
+}
 
+export function dieStringToDiceObject(die: string): DiceObject {
+	const dIndex = die.indexOf("d");
+	if (dIndex === 0) {
+		return {
+			count: 1,
+			size: parseInt(die.substring(dIndex+1))
+		};
+	} else {
+		const dieArray = die.split("d").map(d => parseInt(d));
+		return {
+			count: dieArray[0],
+			size: dieArray[1]
+		}
+	}
+}
+
+interface DiceObject {
+    count: number;
+    size: number;
+}
