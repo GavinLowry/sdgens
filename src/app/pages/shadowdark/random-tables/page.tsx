@@ -1,8 +1,9 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import {
-    RandomTableGroup, monsterGenerator, encounterDisposition, traps, hazards, treasure, magicArmor
+    RandomTableGroup, SeparateOption,
+    monsterGenerator, encounterDisposition, traps, hazards, treasure, magicArmor
 } from "./data";
 import TableRoller from '../utils/table-roller';
 import MagicArmorRoller from '../utils/magic-armor-roller';
@@ -13,8 +14,8 @@ function RandomTables () {
     const [groups, setGroups] = useState<RandomTableGroup[]>();
     const [group, setGroup] = useState<RandomTableGroup>();
     const [results, setResults] = useState<string[][]>([]);
-
     const [rollerResult, setRollerResult] = useState<string[]>([]);
+    const [selectedTable, setSelectedTable] = useState<string>('');
 
     useEffect(() => {
         const groups: RandomTableGroup[] = [
@@ -25,6 +26,7 @@ function RandomTables () {
 
     function onClickGroup (group: RandomTableGroup) {
         setGroup(group);
+        setSelectedTable(group.tables[0].field);
     }
 
     function onKeepResult () {
@@ -40,6 +42,11 @@ function RandomTables () {
         setResults([])
     }
 
+    function onChangeTable (event: ChangeEvent<HTMLSelectElement>) {
+        const { value } = event.target;
+        setSelectedTable(value);
+    }
+
     function rollRoller () {
         if (!group) { return; }
         let roller: any;
@@ -47,6 +54,9 @@ function RandomTables () {
             roller = new MagicArmorRoller();
         } else {
             roller = new TableRoller(group);
+        }
+        if (showTableSelect()) {
+            roller.setSelection(selectedTable);
         }
         const result = roller.rollGroup();
         setRollerResult([
@@ -67,6 +77,12 @@ function RandomTables () {
         );
     }
 
+    function showTableSelect (): boolean {
+        if (!group || !group.options) { return false; }
+        if (!group.options.separate) { return false; }
+        return group.options.separate === "select";
+    }
+
     return (
         <div className="rt-main">
             <div>
@@ -84,6 +100,16 @@ function RandomTables () {
                 <div className="rt-roller-area">
                     { group &&
                         <>
+                            { showTableSelect() &&
+                                <select
+                                    value = {selectedTable}
+                                    onChange={onChangeTable}
+                                >
+                                    {
+                                        group.tables.map(t => <option key={t.field}>{t.field}</option>)
+                                    }
+                                </select>
+                            }
                             <button onClick={rollRoller}>roll</button>
                             { rollerResult.length > 0 &&
                                 <>

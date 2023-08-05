@@ -13,12 +13,13 @@ export interface RandomTableObject {
 }
 
 export type TableCategory = "encounter" | "feature" | "loot";
+export type SeparateOption = "select" | "controlled" | "random";
 
 export interface RandomTableGroup {
     name: string;
     category: TableCategory;
     options?: {
-        separate?: "select" | "random",
+        separate?: SeparateOption,
     };
     tables: RandomTableObject[]
 }
@@ -536,7 +537,7 @@ export const treasure: RandomTableGroup = {
 export const magicArmor: RandomTableGroup = {
     name: "Magic Armor",
     category: "loot",
-    options: { separate: "select" },
+    options: { separate: "controlled" },
     tables: [
         {
             field: "armor type",

@@ -13,7 +13,7 @@ export default class TableRoller {
     rollGroup(): string[] {
         if (this.tableGroup.options) {
             if(this.tableGroup.options.separate) {
-                if(this.tableGroup.options.separate === 'select') {
+                if(['select', 'controlled'].includes(this.tableGroup.options.separate)) {
                     const table = this.tableGroup.tables.find(t => t.field === this.selection);
                     if (!table) { return ['']; }
                     return [this.rollTable(table)];
