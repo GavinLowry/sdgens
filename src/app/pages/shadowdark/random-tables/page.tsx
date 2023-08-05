@@ -69,8 +69,8 @@ function RandomTables () {
         return (
             <ul className="rt-kept-result">
                 {
-                    rollerResult?.map(r => (
-                        <li key={r}>{r}</li>
+                    rollerResult?.map((r, index) => (
+                        <li key={`${index}:${r}`}>{r}</li>
                     ))
                 }
             </ul>

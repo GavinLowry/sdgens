@@ -1,4 +1,4 @@
-import { RandomTableGroup, RandomTableObject } from '@/app/pages/shadowdark/random-tables/data';
+import { RandomTableGroup, RandomTableObject, RandomTableEntry } from '@/app/pages/shadowdark/random-tables/data';
 import { roll, rollDice } from '@/app/pages/shadowdark/utils/random';
 
 export default class TableRoller {
@@ -44,7 +44,29 @@ export default class TableRoller {
     rollTable(table: RandomTableObject): string {
         const diceRoll = rollDice(table.die);
         const entry = table.table.find(e => this.stringToNumArray(e.roll).includes(diceRoll));
-        return entry?.value ?? '';
+        let value = entry?.value ?? '';
+        return this.rollMiniTable(value);
+    }
+
+    rollMiniTable(value: string) {
+        const trigger = "1d4: ";
+        const d4index = value.indexOf(trigger);
+        if (d4index > -1) {
+            const [before, after] = value.split(trigger);
+            const afterArray = after.split(", ");
+            const subtable: RandomTableEntry[] = afterArray.map(e => {
+                const [rollString, text] = e.split(". ");
+                return {roll: rollString, value:text} as RandomTableEntry;
+            })
+            const tableObject: RandomTableObject = {
+                field: "",
+                die: "d4",
+                table: subtable,
+            };
+            const choice = this.rollTable(tableObject);
+            value = `${before} ${choice}`;
+        }
+        return value;
     }
 
     stringToNumArray(original: string): number[] {
