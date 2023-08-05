@@ -1,0 +1,35 @@
+.rt-main {
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+}
+
+.rt-group-entry {
+    cursor: pointer;
+}
+
+.rt-group-entry:hover {
+    background: lightblue;
+}
+
+.rt-group-entry.selected {
+    font-weight: bold;
+}
+
+ul.rt-kept-result {
+    list-style-type: none;
+    border: 1px solid gray;
+    padding: 1rem;
+    font-weight: normal;
+    font-size: 1.7rem;
+}
+
+ul.rt-kept-result li:first-child {
+    font-weight: bold;
+}
+
+.rt-roller-area, .rt-kept-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

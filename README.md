@@ -7,13 +7,21 @@ npm run dev
 
 
 TODO:
+- standard random table objects
+
 - dark map: support longer room description for popup when user clicks "?" button
+- dark map: hover-able icons: sound, smell, feel(wind, cold, heat, etc.) to easily emanate beyond room
 
 - land map: make map list and map side by side
+- land map: click and drag to move focus
+- land map: zoom land map view. idea: hold shift and drag mouse up / down
 - land map: rivers
-- land map: focus and zoom land map view
-- land map: ? land tile random events / points of interest ?
+- land map: ? land tile random events / points of interest / settlement names (p.133)?
 - land map: allow selecting a hex and storing that selection in map object (gm 'bookmark')
+
+- character: ai prompt and display image like npcs
+- character: disable save button when not changed
+- character: when you change class, erase rolled talents
 
 - flag "orphan" items whose project has been removed
 - support change item project

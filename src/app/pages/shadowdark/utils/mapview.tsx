@@ -21,6 +21,7 @@ export interface RoomData extends MapObjectData {
     shape?: string;
     radius?: number;
     flag?: {angle: number, message: string};
+    details?: string;
 }
 
 export interface HallData extends MapObjectData {
