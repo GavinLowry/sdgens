@@ -60,7 +60,7 @@
     align-items: baseline;
 }
 
-button {
+button, input[type="submit"] {
     padding: 1rem;
     border: none;
     border-radius: 1rem;
@@ -68,6 +68,7 @@ button {
     font-variant: small-caps;
     color: white;
     background-color: #46b;
+    width: fit-content;
 }
 
 button:hover {

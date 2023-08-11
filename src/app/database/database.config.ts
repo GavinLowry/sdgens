@@ -9,7 +9,7 @@ https://dexie.org/docs/API-Reference#add-items
 const database = new Dexie("database");
 
 // REMEMBER to update the version number when making table changes
-database.version(7).stores({
+database.version(9).stores({
 	// don't declare all columns like in SQL -- just columns you want to search by
 	projects: '++id', // name, npcs, etc.
 	settings: 'id', // value
@@ -17,6 +17,8 @@ database.version(7).stores({
 	maps: '++id, projectId, name',
 	landMaps: '++id, projectId, name',
 	character: '++id, projectId, name',
+	monster: '++id, projectId, name, level',
+	encounterTable: '++id, projectId, name',
 	// items : '++id, projectId, type', ...and array of string for the item itself
 });
 
@@ -26,5 +28,7 @@ export const npcsTable = database.table('npcs');
 export const mapTable = database.table('maps');
 export const landMapTable = database.table('landMaps');
 export const characterTable = database.table('character');
+export const monsterTable = database.table('monster');
+export const encounterTable = database.table('encounterTable');
 
 export default database;

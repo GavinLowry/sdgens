@@ -7,8 +7,12 @@ npm run dev
 
 
 TODO:
+- stored monster objects, data entry ui
+- custom encounter tables, requires stored monster objects
+
 - standard random table objects (ongoing)
 - save random table object to db, support edit and added notes field, and allow delete from db
+- copy random object to clipboard: navigator.clipboard.writeText(text); -- use a copy svg icon
 
 - dark map: support longer room description for popup when user clicks "?" button
 - dark map: hover-able icons: sound, smell, feel(wind, cold, heat, etc.) to easily emanate beyond room

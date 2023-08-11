@@ -21,3 +21,5 @@ export interface IMap extends StoredItem { projectId: number; }
 export interface ILandMap extends StoredItem { projectId: number; }
 
 export interface ICharacter extends StoredItem { projectId: number; }
+
+export interface IMonster extends StoredItem { projectId: number; }

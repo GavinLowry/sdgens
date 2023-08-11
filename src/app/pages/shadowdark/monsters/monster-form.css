@@ -1,0 +1,43 @@
+.mf {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mf-two-columns {
+    display: flex;
+    gap: 1rem;
+}
+
+.mf-stat-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mf-stat-block.half {
+    flex-grow: 1;
+}
+
+.mf-control-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.mf-input-wrapper {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+}
+
+.mf-input-wrapper input {
+    width: 8rem;
+}
+
+.mf-input-wrapper.long input {
+    width: 40rem;
+}
+
+textarea {
+    padding: 1rem;
+    resize: vertical;
+}
