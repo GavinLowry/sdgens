@@ -1,0 +1,5 @@
+.cet-two-columns {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}

@@ -51,6 +51,7 @@ export default function ShadowdarkLayout({children}: {children: ReactNode}) {
                 <Link href="/pages/shadowdark/npcs">npcs</Link>
                 <Link href="/pages/shadowdark/random-tables">random tables</Link>
                 <Link href="/pages/shadowdark/monsters">monsters</Link>
+                <Link href="/pages/shadowdark/custom-encounter-table">custom encounter tables</Link>
             </div>
             <div className="sd-right-column">
                 <FilterByProject.Provider value={{filterByProject, setFilterByProject}}>

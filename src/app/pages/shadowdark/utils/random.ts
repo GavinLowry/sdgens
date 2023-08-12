@@ -56,7 +56,7 @@ export function dieStringToDiceObject(die: string): DiceObject {
 	}
 }
 
-interface DiceObject {
+export interface DiceObject {
     count: number;
     size: number;
 }

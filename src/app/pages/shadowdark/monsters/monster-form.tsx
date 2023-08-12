@@ -82,6 +82,7 @@ function MonsterForm ({data, onSubmit, onDelete}: MonsterFormAttrs) {
 
 export const fieldNames = ["name", "details", "ac", "hp", "atk", "mv", "str", "dex", "con", "int", "wil", "cha", "level", "al", "extras"];
 type FormValues = typeof fieldNames[number];
+
 export type FormFields = {
     [key: FormValues]: string;
 }
