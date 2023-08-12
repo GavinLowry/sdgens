@@ -1,0 +1,21 @@
+.etf-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.etf-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.etf-list-entry {
+    display: grid;
+    grid-template-columns: 8rem 16rem auto;
+    gap: 1rem;
+}
+
+.etf-list-entry button {
+    width: auto;
+}

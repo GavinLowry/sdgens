@@ -43,7 +43,7 @@ export default class TableRoller {
     
     rollTable(table: RandomTableObject): string {
         const diceRoll = rollDice(table.die);
-        const entry = table.table.find(e => this.stringToNumArray(e.roll).includes(diceRoll));
+        const entry = table.table.find(e => stringToNumArray(e.roll).includes(diceRoll));
         let value = entry?.value ?? '';
         return this.rollMiniTable(value);
     }
@@ -69,38 +69,38 @@ export default class TableRoller {
         return value;
     }
 
-    stringToNumArray(original: string): number[] {
-        const hyphenIndex = original.indexOf("-");
-        const commaIndex = original.indexOf(",");
-        const plusIndex = original.indexOf("+");
-        if (hyphenIndex > -1) {
-            const from = parseInt(original.substring(0, hyphenIndex));
-            const to = parseInt(original.substring(hyphenIndex + 1));
-            const result = [];
-            for(let i=from; i<=to; ++i) {
-                result.push(i);
-            }
-            if (from === 0) {
-                for(let i=-1; i>-10; --i) {
-                    result.push(i);
-                }
-            }
-            return result;
-        }
-        else if (commaIndex > -1) {
-            return original
-                .split(",")
-                .map(entry => parseInt(entry));
-        }
-        else if (plusIndex > -1) {
-            const number = parseInt(original.substring(0,plusIndex));
-            const result = [];
-            for (let i=number; i<=number+20; ++i){
-                result.push(i);
-            }
-            return result;
-        }
-        return [parseInt(original)];
-    }
+}
 
+export function stringToNumArray(original: string): number[] {
+    const hyphenIndex = original.indexOf("-");
+    const commaIndex = original.indexOf(",");
+    const plusIndex = original.indexOf("+");
+    if (hyphenIndex > -1) {
+        const from = parseInt(original.substring(0, hyphenIndex));
+        const to = parseInt(original.substring(hyphenIndex + 1));
+        const result = [];
+        for(let i=from; i<=to; ++i) {
+            result.push(i);
+        }
+        if (from === 0) {
+            for(let i=-1; i>-10; --i) {
+                result.push(i);
+            }
+        }
+        return result;
+    }
+    else if (commaIndex > -1) {
+        return original
+            .split(",")
+            .map(entry => parseInt(entry));
+    }
+    else if (plusIndex > -1) {
+        const number = parseInt(original.substring(0,plusIndex));
+        const result = [];
+        for (let i=number; i<=number+20; ++i){
+            result.push(i);
+        }
+        return result;
+    }
+    return [parseInt(original)];
 }

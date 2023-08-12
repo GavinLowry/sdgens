@@ -5,6 +5,7 @@ import MonsterForm, { fieldNames, FormFields } from './monster-form';
 import { FilterByProject, SelectedProject } from '@/app/context';
 import { monsterTable } from "@/app/database/database.config";
 import { IMonster } from "@/app/database/types";
+import MonsterList from "../components/monster-list/monster-list";
 
 function Monsters () {
 	const {selectedProject, setSelectedProject} = useContext(SelectedProject);
@@ -102,7 +103,6 @@ function Monsters () {
 
     function onClickList (monster: FormFields) {
         setFormData(monster);
-        console.log({monster})
         setShowForm(true);
     }
 
@@ -147,7 +147,11 @@ function Monsters () {
                 showForm && formData ?
                 <MonsterForm data={formData} onSubmit={onSubmit} onDelete={onDelete} />
                 :
-                renderMonsterList()
+                <>
+                    <button onClick={onNewMonster}>new</button>
+                    {/*renderMonsterList()*/}
+                    <MonsterList onClick={onClickList} />
+                </>
             }
         </div>
     );
