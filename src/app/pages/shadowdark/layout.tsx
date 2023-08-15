@@ -1,12 +1,13 @@
 'use client'
 
 import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
-import Link from 'next/link';
 import {FilterByProject, SelectedProject} from '../../context';
 import {settingsTable} from '../../database/database.config';
 import {projectTable} from "../../database/database.config";
 import {IProject} from "../../database/types";
 import Toggle from "../../components/toggle";
+
+import SdNav from "./components/sd-nav/sd-nav";
 
 import './shadowdark.css'
 
@@ -42,17 +43,7 @@ export default function ShadowdarkLayout({children}: {children: ReactNode}) {
     
     return (
         <div className="sd-layout">
-            <div className="sd-left-nav">
-                <Link href="/pages/shadowdark">main</Link>
-                <Link href="/pages/shadowdark/projects">projects</Link>
-                <Link href="/pages/shadowdark/maps">maps</Link>
-                <Link href="/pages/shadowdark/land-maps">land maps</Link>
-                <Link href="/pages/shadowdark/characters">characters</Link>
-                <Link href="/pages/shadowdark/npcs">npcs</Link>
-                <Link href="/pages/shadowdark/random-tables">random tables</Link>
-                <Link href="/pages/shadowdark/monsters">monsters</Link>
-                <Link href="/pages/shadowdark/custom-encounter-table">custom encounter tables</Link>
-            </div>
+            <SdNav />
             <div className="sd-right-column">
                 <FilterByProject.Provider value={{filterByProject, setFilterByProject}}>
                 <SelectedProject.Provider value={{selectedProject, setSelectedProject}}>

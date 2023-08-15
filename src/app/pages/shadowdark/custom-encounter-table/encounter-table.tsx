@@ -11,8 +11,6 @@ interface EncounterTableAttrs {
 export default function EncounterTable ({table}: EncounterTableAttrs) {
     const [rollResult, setRollResult] = useState<TableEntry | undefined>();
     
-    console.log({table})
-
     if (!table) { return; }
     const { dice, entries, title } = table;
 

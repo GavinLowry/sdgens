@@ -7,6 +7,11 @@ npm run dev
 
 
 TODO:
+- style the left nav bar and make collapsible categories - probably make the nav bar a component
+
+- stash page: "current" objects rolled on random tables: items, monsters, etc. "stashable" from any random table
+
+- better random table handler: alow passed render object, support encounter tables
 
 - standard random table objects (ongoing)
 - save random table object to db, support edit and added notes field, and allow delete from db
@@ -25,6 +30,7 @@ TODO:
 - character: ai prompt and display image like npcs
 - character: disable save button when not changed
 - character: when you change class, erase rolled talents
+- character: have character and npc share core code
 
 - flag "orphan" items whose project has been removed
 - support change item project
