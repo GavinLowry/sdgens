@@ -7,8 +7,6 @@ npm run dev
 
 
 TODO:
-- stored monster objects, data entry ui
-- custom encounter tables, requires stored monster objects
 
 - standard random table objects (ongoing)
 - save random table object to db, support edit and added notes field, and allow delete from db
@@ -33,6 +31,8 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- custom encounter tables, requires stored monster objects
+- stored monster objects, data entry ui
 - dark map: map exit labels - a dot at room radius and stored angle from center. place text message
 - dark map: allow two levels of darker room color stored in room and hall data
 - dark map: room text gets hidden by walls. maybe text background

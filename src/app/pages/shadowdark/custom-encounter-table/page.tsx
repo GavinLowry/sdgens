@@ -79,6 +79,7 @@ function CustomEncounterTable () {
 
     return (
         <div>
+<<<<<<< HEAD
             <div>
                 custom encounter tables
             </div>
@@ -97,8 +98,16 @@ function CustomEncounterTable () {
                 }
                 <EncounterTable table={selectedTable} />
             </div>
+=======
+            custom encounter tables
+            <EncounterTableForm />
+>>>>>>> d3a9edebb1aa4002311d5bdd4ddee76d065f54b4
         </div>
     );
 }
 
+<<<<<<< HEAD
 export default CustomEncounterTable;
+=======
+export default CustomEncounterTable;
+>>>>>>> d3a9edebb1aa4002311d5bdd4ddee76d065f54b4
