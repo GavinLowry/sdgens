@@ -1,16 +1,17 @@
 'use client'
 
 import { ChangeEvent, ReactNode, useContext, useEffect, useRef, useState } from 'react';
-import MonsterForm, { fieldNames, FormFields } from './monster-form';
+import MonsterForm, { fieldNames, Monster } from './monster-form';
 import { FilterByProject, SelectedProject } from '@/app/context';
-import { monsterTable } from "@/app/database/database.config";
+import { monsterTable, stashTable } from "@/app/database/database.config";
+import { StashItem } from '../stash/page';
 import { IMonster } from "@/app/database/types";
 import MonsterList from "../components/monster-list/monster-list";
 
 function Monsters () {
 	const {selectedProject, setSelectedProject} = useContext(SelectedProject);
 	const {filterByProject, setFilterByProject} = useContext(FilterByProject);
-    const [formData, setFormData] = useState<FormFields>();
+    const [formData, setFormData] = useState<Monster>();
     const [showForm, setShowForm] = useState<boolean>(false);
     const [monsterList, setMonsterList] = useState<any[]>([]);
 
@@ -28,11 +29,11 @@ function Monsters () {
         updateMonsterList();
     }, [])
 
-    function makeDefaultObject (): FormFields {
+    function makeDefaultObject (): Monster {
         return fieldNames.reduce((ac, f) => ({...ac, [f]: ''}), {});
     }
 
-	function storeMonster(data: FormFields) {
+	function storeMonster(data: Monster) {
 		const monster = {
 			...data,
 			projectId: selectedProject,
@@ -49,7 +50,7 @@ function Monsters () {
 		}
 	}
 
-    function updateMonster (data: FormFields) {
+    function updateMonster (data: Monster) {
         try {
             monsterTable
             .put(data)
@@ -61,8 +62,8 @@ function Monsters () {
 		}
     }
 
-    function deleteMonster (data: FormFields) {
-        monsterTable.delete(data.id).then(() => {
+    function deleteMonster (data: Monster) {
+        monsterTable.delete(data.id!).then(() => {
             updateMonsterList();
         });
     }
@@ -83,7 +84,7 @@ function Monsters () {
 		})
 	}
 
-    const onSubmit = (data?: FormFields) => {
+    const onSubmit = (data?: Monster) => {
         if (!data) {
             setFormData(undefined);
             return;
@@ -101,7 +102,7 @@ function Monsters () {
         updateMonsterList();
     };
 
-    function onClickList (monster: FormFields) {
+    function onClickList (monster: Monster) {
         setFormData(monster);
         setShowForm(true);
     }
@@ -140,12 +141,22 @@ function Monsters () {
         );
     }
 
+    function onStash (data: Monster) {
+        const item: StashItem = {
+            type: "monster",
+            data,
+        };
+        stashTable
+        .add(item)
+        .then(response => console.log({response}));
+    }
+
     return (
         <div>
             monsters page
             {
                 showForm && formData ?
-                <MonsterForm data={formData} onSubmit={onSubmit} onDelete={onDelete} />
+                <MonsterForm data={formData} onSubmit={onSubmit} onDelete={onDelete} onStash={onStash} />
                 :
                 <>
                     <button onClick={onNewMonster}>new</button>

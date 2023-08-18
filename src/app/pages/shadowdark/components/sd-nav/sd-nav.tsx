@@ -37,6 +37,11 @@ const links: LinkEntry[] = [
         { title: "land maps", href: "/pages/shadowdark/land-maps" },
         { title: "encounter tables", href: "/pages/shadowdark/custom-encounter-table" },
     ] },
+    {
+        title: "in-game tools", links: [
+            { title: "stash", href: "/pages/shadowdark/stash" },
+        ]
+    },
 ];
 
 interface CategoryDisplayAttrs {

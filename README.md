@@ -7,9 +7,9 @@ npm run dev
 
 
 TODO:
-- style the left nav bar and make collapsible categories - probably make the nav bar a component
-
 - stash page: "current" objects rolled on random tables: items, monsters, etc. "stashable" from any random table
+
+- monster form: disable save if not changed
 
 - better random table handler: alow passed render object, support encounter tables
 
@@ -37,6 +37,7 @@ TODO:
 - support some kind of export - data dump, save map as image, etc.
 
 DONE:
+- style the left nav bar and make collapsible categories - probably make the nav bar a component
 - custom encounter tables, requires stored monster objects
 - stored monster objects, data entry ui
 - dark map: map exit labels - a dot at room radius and stored angle from center. place text message

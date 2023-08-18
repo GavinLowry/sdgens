@@ -1,0 +1,48 @@
+.stash-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stash-item {
+    border: 1px solid gray;
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+}
+
+.stash-item-type {
+    font-weight: bold;
+}
+
+.stash-item-content {
+    font-size: 1.6rem;
+}
+
+.stash-data-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.stash-right-column {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stash-right-column button {
+    border: 1px solid gray;
+    height: 2rem;
+    padding: 0 .4rem;
+    border-radius: 1rem;
+    background-color: transparent;
+    color: black;
+    line-height: 2rem;
+    cursor: pointer;
+}
+
+.stash-right-column button:hover {
+    background-color: white;
+}

@@ -1,10 +1,10 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 import { FilterByProject, SelectedProject } from '@/app/context';
 import { monsterTable } from "@/app/database/database.config";
-import { FormFields } from "../../monsters/monster-form";
+import { Monster } from "../../monsters/monster-form";
 
 interface MonsterListAttrs {
-    onClick(m: FormFields): void,
+    onClick(m: Monster): void,
 }
 
 export default function MonsterList ({onClick}: MonsterListAttrs) {

@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import MonsterList from '../components/monster-list/monster-list';
-import { FormFields } from '../monsters/monster-form';
+import { Monster } from '../monsters/monster-form';
 import { stringToNumArray } from '../utils/table-roller';
 import { dieStringToDiceObject, DiceObject } from '../utils/random';
 import "./encounter-table-form.css";
@@ -30,7 +30,7 @@ function EncounterTableForm ({onSubmit, onCancel}: EncounterTableFormAttrs) {
         validateTable();
     }, [entries, diceValue, titleValue])
 
-    function onClickMonsterList (monster: FormFields) {
+    function onClickMonsterList (monster: Monster) {
         const editEntries = [ ...entries ];
         editEntries[selectMonsterFor].monster = monster;
         setEntries(editEntries);
@@ -229,7 +229,7 @@ export interface TableObject {
 
 export interface TableEntry {
     roll: string;
-    monster?: FormFields;
+    monster?: Monster;
     notes?: string;
 }
 

@@ -5,22 +5,23 @@ import { useForm, FieldPath } from 'react-hook-form';
 import "./monster-form.css";
 
 interface MonsterFormAttrs {
-    data: FormFields;
-    onSubmit(data?: FormFields): void;
+    data: Monster;
+    onSubmit(data?: Monster): void;
     onDelete(): void;
+    onStash(data: Monster): void;
 }
 
-function MonsterForm ({data, onSubmit, onDelete}: MonsterFormAttrs) {
-    const { handleSubmit, register } = useForm<FormFields>({
+function MonsterForm ({data, onSubmit, onDelete, onStash}: MonsterFormAttrs) {
+    const { handleSubmit, register } = useForm<Monster>({
         defaultValues: data,
     });
 
-    const onFormSubmit = handleSubmit ((data: FormFields) => {
+    const onFormSubmit = handleSubmit ((data: Monster) => {
         onSubmit(data);
     });
 
     interface InputAttrs {
-        name: FieldPath<FormFields>;
+        name: FieldPath<Monster>;
         long?: boolean;
     }
 
@@ -73,7 +74,10 @@ function MonsterForm ({data, onSubmit, onDelete}: MonsterFormAttrs) {
                 <input type="submit" />
                 <button onClick={onCancel}>cancel</button>
                 { data.id &&
-                    <button onClick={onDelete}>delete</button>
+                    <>
+                        <button onClick={onDelete}>delete</button>
+                        <button onClick={() => onStash(data)}>stash</button>
+                    </>
                 }
             </div>
         </form>
@@ -83,8 +87,9 @@ function MonsterForm ({data, onSubmit, onDelete}: MonsterFormAttrs) {
 export const fieldNames = ["name", "details", "ac", "hp", "atk", "mv", "str", "dex", "con", "int", "wil", "cha", "level", "al", "extras"];
 type FormValues = typeof fieldNames[number];
 
-export type FormFields = {
-    [key: FormValues]: string;
+export type Monster = {
+    id?: string;
+    [key: FormValues]: string | undefined;
 }
 
 export default MonsterForm;
