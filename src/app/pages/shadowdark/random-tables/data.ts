@@ -12,7 +12,7 @@ export interface RandomTableObject {
     table: RandomTableEntry[],
 }
 
-export type TableCategory = "encounter" | "feature" | "loot";
+export type TableCategory = "encounter" | "feature" | "loot" | "gameplay";
 export type SeparateOption = "select" | "controlled" | "random";
 
 export interface RandomTableGroup {
@@ -530,6 +530,68 @@ export const treasure: RandomTableGroup = {
                 {roll: "98-99", value: "The hallowed Armor of Saint Terragnis (1,200 gp)"},
                 {roll: "00-00", value: "The mighty Staff of Ord (1,200 gp)"},
             ]
+        },
+    ],
+};
+
+export const mishap: RandomTableGroup = {
+    name: "Wizard Mishap",
+    category: "gameplay",
+    options: { separate: "select" },
+    tables: [
+        {
+            field: "Tier 1-2",
+            die: "d12",
+            table: [
+                { roll: "1", value: "Devastation! Roll twice and combine both effects (reroll any further 1s)" },
+                { roll: "2", value: "Explosion! You take 1d8 damage" },
+                { roll: "3", value: "Refraction! You target yourself with the spell" },
+                { roll: "4", value: "Your hand slipped! You target a random ally with the spell" },
+                { roll: "5", value: "Mind wound! You can't cast this spell again for a week" },
+                { roll: "6", value: "Discorporation! One random piece of your gear disappears forever" },
+                { roll: "7", value: "Spell worm! You lose the ability to cast a random spell on each of your turns until you pass a DC 12 Constitution check. You regain the ability to cast those spells after completing a rest" },
+                { roll: "8", value: "Harmonic failure! You lose the ability to cast a random spell until you complete a rest" },
+                { roll: "9", value: "Poof! You suppress all light within a near distance from you, including sunlight and magical light, for 10 rounds" },
+                { roll: "10", value: "The horror! You scream uncontrollably for 3 rounds in Primordial, drawing lots of attention" },
+                { roll: "11", value: "Energy surge! You glow bright purple for 10 rounds, granting enemies advantage on attacks against you" },
+                { roll: "12", value: "Unstable conduit! You have disadvantage on casting spells of the same tier for 10 rounds" },
+            ],
+        },
+        {
+            field: "Tier 3-4",
+            die: "d12",
+            table: [
+                { roll: "1", value: "Devastation! Roll twice and combine both effects (reroll any further 1s)" },
+                { roll: "2", value: "Blast radius! You and all near creatures take 2d6 damage" },
+                { roll: "3", value: "Duplicate refraction! You target yourself and the nearest ally with two identical copies of the spell" },
+                { roll: "4", value: "You flubbed the incantation! You cast a random spell from your known spells at the same targets, even if it would not normally be possible" },
+                { roll: "5", value: "Ethereal bandersnatch! Two random pieces of your gear disappear forever" },
+                { roll: "6", value: "Arcano-mutagenesis! You must pass a DC 12 Constitution check or a random stat drops to 3 (-4) until you successfully complete a rest" },
+                { roll: "7", value: "Boom! You open a 30-foot deep sinkhole in the ground with you at the center. You and all near creatures must pass a DC 15 Dexterity check or fall in" },
+                { roll: "8", value: "Petrification! 1d4 of your limbs petrify for the next 24 hours" },
+                { roll: "9", value: "Stupefaction! You lose the ability to cast all spells of the same tier until you complete a rest" },
+                { roll: "10", value: "It cannot be unseen! You must pass a DC 12 Wisdom check or descend into mad raving for 1d10 rounds" },
+                { roll: "11", value: "Radioactive energies! You whirl with repulsive energies, drawing the hostility and attacks of all enemies who can see you for the next 1d4 rounds" },
+                { roll: "12", value: "Uncontained channeling! You have disadvantage on casting spells of the same tier and lower for 10 rounds" },
+            ],
+        },
+        {
+            field: "Tier 5",
+            die: "d12",
+            table: [
+                { roll: "1", value: "Devastation! Roll twice and combine both effects (reroll any further 1s)" },
+                { roll: "2", value: "Pyroclastic extrusion! You deal 3d8 damage to yourself and all creatures within near" },
+                { roll: "3", value: "Astral incision! An otherworldly blade cuts into your memory. You permanently forget one random spell" },
+                { roll: "4", value: "The grimlow! You accidentally summon a hostile grimlow in a space near to you. It persists for 2d4 rounds before disappearing whence it came" },
+                { roll: "5", value: "Dark plasma aura! Attacks against you pass through a vile aura, dealing double damage for the next 2d6 rounds" },
+                { roll: "6", value: "Gate! You open a magic portal to another location, whether on this plane or another. Something dreadful will come through in 1d4 rounds unless you close it with a DC 18 Intelligence check on your turn" },
+                { roll: "7", value: "Runaway arcana loop! Your spell targets a random creature you can see, even if it would not normally be possible. Each subsequent turn, you must pass a spellcasting check for that spell or you cast it on another random creature in the same way (effect ends on success)" },
+                { roll: "8", value: "Arcane obstruction! You lose the ability to cast all spells of a random tier until you complete a rest" },
+                { roll: "9", value: "What lurks beyond the veil! You must pass a DC 15 Wisdom check or fall into mad raving for 1d4 hours" },
+                { roll: "10", value: "Ord's balance! You must either permanently sacrifice a magic item or the ability to cast a tier 3+ spell you know" },
+                { roll: "11", value: "Unmitigated chain reaction! You have disadvantage on casting all spells for the next 10 rounds" },
+                { roll: "12", value: "Shred! You tear a large hole in the fabric of the universe close to you; the lightless tear grows larger every round" },
+            ],
         },
     ],
 };

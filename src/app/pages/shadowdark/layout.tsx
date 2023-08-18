@@ -28,7 +28,7 @@ export default function ShadowdarkLayout({children}: {children: ReactNode}) {
 		projectTable.toArray().then(stored => {
 			setProjects(stored);
 		});
-      }, []);
+    }, []);
 
     function getProjectName(): string {
         if (!projects) { return ""; }

@@ -3,7 +3,7 @@
 import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import {
     RandomTableGroup, SeparateOption,
-    monsterGenerator, encounterDisposition, traps, hazards, treasure, magicArmor, magicWeapon
+    monsterGenerator, encounterDisposition, traps, hazards, treasure, magicArmor, magicWeapon, mishap
 } from "./data";
 import TableRoller from '../utils/table-roller';
 import MagicArmorRoller from '../utils/magic-armor-roller';
@@ -20,7 +20,7 @@ function RandomTables () {
 
     useEffect(() => {
         const groups: RandomTableGroup[] = [
-            monsterGenerator, encounterDisposition, traps, hazards, treasure, magicArmor, magicWeapon
+            monsterGenerator, encounterDisposition, traps, hazards, treasure, magicArmor, magicWeapon, mishap
         ];
         setGroups(groups);
     }, []);

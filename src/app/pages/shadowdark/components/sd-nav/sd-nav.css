@@ -10,7 +10,7 @@
     gap: 1rem;
 }
 
-.sdn-category, .sdn-link, a:visited, a:link {
+.sdn-category, .sdn-link, .sdn-link a:visited, .sdn-link a:link {
     display:flex;
     color: var(--nav-color);
     text-decoration: none;
