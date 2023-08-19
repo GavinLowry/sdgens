@@ -8,14 +8,16 @@ import {
 import TableRoller from '../utils/table-roller';
 import MagicArmorRoller from '../utils/magic-armor-roller';
 import MagicWeaponRoller from '../utils/magic-weapon-roller';
+import { StashItem, StashType } from '../stash/page';
+import { stashTable } from "@/app/database/database.config";
 
 import "./random-tables.css";
 
 function RandomTables () {
     const [groups, setGroups] = useState<RandomTableGroup[]>();
     const [group, setGroup] = useState<RandomTableGroup>();
-    const [results, setResults] = useState<string[][]>([]);
-    const [rollerResult, setRollerResult] = useState<string[]>([]);
+    const [results, setResults] = useState<StashItem[]>([]);
+    const [rollerResult, setRollerResult] = useState<StashItem | undefined>();
     const [selectedTable, setSelectedTable] = useState<string>('');
 
     useEffect(() => {
@@ -31,12 +33,20 @@ function RandomTables () {
     }
 
     function onKeepResult () {
+        if (!rollerResult) { return; }
         setResults(
             [
                 ...results,
                 rollerResult
             ]
         )
+    }
+
+    function onStashResult (): void {
+        if (!rollerResult) { return; }
+        stashTable
+        .add(rollerResult)
+        .then(response => console.log({response}));
     }
 
     function onClearResults () {
@@ -63,17 +73,20 @@ function RandomTables () {
             roller.setSelection(selectedTable);
         }
         const result = roller.rollGroup();
-        setRollerResult([
-            group.name,
-            ...result
-        ]);
+        console.log({group})
+        const stashable = {
+            type: group.name as StashType,
+            data: result as Details,
+        }
+        setRollerResult(stashable);
     }
 
     function renderResult(): ReactNode {
+        const data = rollerResult?.data || [];
         return (
             <ul className="rt-kept-result">
                 {
-                    rollerResult?.map((r, index) => (
+                    (data as string[]).map((r, index) => (
                         <li key={`${index}:${r}`}>{r}</li>
                     ))
                 }
@@ -115,10 +128,11 @@ function RandomTables () {
                                 </select>
                             }
                             <button onClick={rollRoller}>roll</button>
-                            { rollerResult.length > 0 &&
+                            { (rollerResult?.data as string[] ?? []).length > 0 &&
                                 <>
                                     { renderResult() }
                                     <button onClick={onKeepResult}>keep</button>
+                                    <button onClick={onStashResult}>stash</button>
                                 </>
                             }
                         </>
@@ -130,7 +144,7 @@ function RandomTables () {
                     <button onClick={onClearResults}>clear</button>
                     { results.map((r, rindex) => (
                         <ul key={`result${rindex}`} className="rt-kept-result">
-                            {r.map(rline =>(
+                            {(r.data as string[]).map(rline =>(
                                 <li key={rline}>
                                     {rline}
                                 </li>
@@ -142,5 +156,7 @@ function RandomTables () {
         </div>
     );
 }
+
+export type Details = string[];
 
 export default RandomTables;

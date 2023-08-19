@@ -3,6 +3,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { stashTable } from "@/app/database/database.config";
 import { Monster } from "../monsters/monster-form";
+import { Details } from "../random-tables/page";
 import { attributeNames } from "../utils/names";
 import "./stash.css";
 
@@ -57,7 +58,7 @@ export default function Stash () {
     }
 
     function renderMonsterItem (item: StashItem): ReactNode {
-        const data: Monster = item.data;
+        const data: Monster = item.data as Monster;
         return (
             <>
                 <div className="stash-item-type">{item.type}</div>
@@ -87,10 +88,35 @@ export default function Stash () {
         );
     }
 
+    function renderTreasureItem (item: StashItem): ReactNode {
+        return (
+            <>
+                <div className="stash-item-type">{item.type}</div>
+                <div className="stash-item-content">
+                    {
+                        (item.data as Details).map(d => (
+                            <div className="stash-data-row" key={d}>{d}</div>
+                        ))
+                    }
+                </div>
+            </>
+        );
+    }
+
+    function getItemKey(item: StashItem): string {
+        if (item.type === "monster") {
+            return `${item.id}:${(item.data as Monster).name}`;
+        }
+        else {
+            return `${item.id}:${(item.data as Details)[0]}`;
+        }
+    }
+
     function renderStashItem (item: StashItem, order: string): ReactNode {
-        const key = `${item.id}:${item.data.name}`;
+        const key = getItemKey(item);
         let itemMarkup: ReactNode = <></>;
         if (item.type === "monster") { itemMarkup = renderMonsterItem(item); }
+        else { itemMarkup = renderTreasureItem(item); }
         return (
             <div key={ key } className="stash-item">
                 <div className="stash-column">
@@ -116,10 +142,10 @@ export default function Stash () {
     );
 }
 
-type StashType = "monster"; // | treasure, etc.
+export type StashType = "monster" | "Treasure" | "Magic Armor" | "Magic Weapon";
 
 export interface StashItem {
     id?: string;
     type: StashType;
-    data: Monster; // | Treasure | Npc | etc.
+    data: Monster | Details; // | Treasure | Npc | etc.
 }
