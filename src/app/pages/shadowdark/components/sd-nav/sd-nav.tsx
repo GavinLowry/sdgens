@@ -33,14 +33,19 @@ const links: LinkEntry[] = [
         { title: "random tables", href: "/pages/shadowdark/random-tables" },
         { title: "npcs", href: "/pages/shadowdark/npcs" },
         { title: "characters", href: "/pages/shadowdark/characters" },
-        { title: "dark maps", href: "/pages/shadowdark/maps" },
-        { title: "land maps", href: "/pages/shadowdark/land-maps" },
         { title: "encounter tables", href: "/pages/shadowdark/custom-encounter-table" },
     ] },
     {
-        title: "in-game tools", links: [
+        title: "maps",
+        links: [
+            { title: "dark maps", href: "/pages/shadowdark/maps" },
+            { title: "land maps", href: "/pages/shadowdark/land-maps" },
+            { title: "hex map", href: "/pages/shadowdark/hex-map" },
+        ],
+    },
+    {
+        title: "game tools", links: [
             { title: "stash", href: "/pages/shadowdark/stash" },
-            { title: "walk", href: "/pages/shadowdark/walk" },
         ]
     },
 ];

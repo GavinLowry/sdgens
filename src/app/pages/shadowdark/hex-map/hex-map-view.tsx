@@ -1,10 +1,10 @@
 'use client'
 
 import { KeyboardEvent, MouseEvent, useEffect, useState } from 'react';
-import "./walk.css";
 import {Point} from '../utils/mapview';
 import { drawHex, getLitTiles, hatchHex, hexRatio, pointsAreEqual, ringPointsAndAngles, subtractPoints } from "../utils/hex";
 import { TileMap, MapTile } from './hex-map';
+import "./hex-map.css";
 
 interface HexMapViewAttrs {
     tileMap: TileMap;

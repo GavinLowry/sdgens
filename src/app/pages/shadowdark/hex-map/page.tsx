@@ -7,7 +7,7 @@ import HexMapView from './hex-map-view';
 import {SelectedProject} from '../../../context';
 import { hexMapTable } from '@/app/database/database.config';
 import FileList, { FileListEntry } from '../components/file-list/file-list';
-import "./walk.css";
+import "./hex-map.css";
 
 // TODO:
 // show list of stored hex maps
@@ -32,7 +32,6 @@ export default function Walk () {
         hexMapTable
         .toArray()
         .then(response => {
-            console.log('update',{response})
             setMapList(response);
         })
     }
@@ -75,6 +74,10 @@ export default function Walk () {
     }
 
     function handleSaveMap () {
+        if (tileMap.id) {
+            hexMapTable.put(tileMap);
+            return;
+        }
         const savableMap = {
             ...tileMap,
             name: mapName,
@@ -114,7 +117,10 @@ export default function Walk () {
     function handleClickMapList (mapId: string) {
         const tMap = mapList.find(m => m.id === mapId);
         if (tMap) {
-            setTileMap(tMap)
+            setTileMap(tMap);
+            if (tMap.name) {
+                setMapName(tMap.name);
+            }
         }
     }
 
@@ -125,10 +131,16 @@ export default function Walk () {
         };
     }
 
+    function handleNewMap (): void {
+        setTileMap(getTileMap({radius:5}));
+        setMapName('');
+    }
+
     return (
         <div className="walk">
             { mapList &&
                 <div id="walk-list-column">
+                    <button onClick={handleNewMap}>new map</button>
                     <div>stored maps</div>
                     <FileList entries={mapList.map(m => getFileListEntry(m))} onClick={handleClickMapList} />
                 </div>
@@ -148,7 +160,7 @@ export default function Walk () {
                     <div className="walk-build-controls">
                         <label htmlFor="mapName">map name</label>
                         <input type="text" name="mapName" onChange={handleChangeMapName} value={mapName}></input>
-                        <button onClick={handleSaveMap}>save map</button>
+                        <button onClick={handleSaveMap} disabled={!mapName}>save map</button>
                     </div>
                 </div>
             </div>

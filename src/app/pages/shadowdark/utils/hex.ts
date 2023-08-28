@@ -1,5 +1,5 @@
 import {Point} from './mapview';
-import { TileMap, MapTile } from '../walk/hex-map';
+import { TileMap, MapTile } from '../hex-map/hex-map';
 
 export const hexRatio = 0.85;
 
