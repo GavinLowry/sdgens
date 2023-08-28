@@ -40,6 +40,7 @@ const links: LinkEntry[] = [
     {
         title: "in-game tools", links: [
             { title: "stash", href: "/pages/shadowdark/stash" },
+            { title: "walk", href: "/pages/shadowdark/walk" },
         ]
     },
 ];

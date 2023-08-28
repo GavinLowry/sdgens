@@ -1,0 +1,29 @@
+.walk {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.walk-list-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.walk-view {
+    border: 1px solid gray;
+}
+
+.walk-controls-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.walk-build-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.walk-build-controls .active {
+    background-color: orange;
+}

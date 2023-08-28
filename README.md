@@ -11,8 +11,7 @@ TODO:
 
 - monster form: disable save if not changed
 
-- better random table handler: alow passed render object, support encounter tables
-
+- better random table handler: alow passed render function, support encounter tables
 - standard random table objects (ongoing)
 - save random table object to db, support edit and added notes field, and allow delete from db
 - copy random object to clipboard: navigator.clipboard.writeText(text); -- use a copy svg icon

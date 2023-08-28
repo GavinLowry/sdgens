@@ -9,7 +9,7 @@ https://dexie.org/docs/API-Reference#add-items
 const database = new Dexie("database");
 
 // REMEMBER to update the version number when making table changes
-database.version(11).stores({
+database.version(12).stores({
 	// don't declare all columns like in SQL -- just columns you want to search by
 	projects: '++id', // name, npcs, etc.
 	settings: 'id', // value
@@ -20,6 +20,7 @@ database.version(11).stores({
 	monster: '++id, projectId, name, level',
 	encounterTable: '++id, projectId, name',
 	stashItem: '++id, projectId, type',
+	hexMap: '++id, projectId',
 	// items : '++id, projectId, type', ...and array of string for the item itself
 });
 
@@ -32,5 +33,6 @@ export const characterTable = database.table('character');
 export const monsterTable = database.table('monster');
 export const encounterTable = database.table('encounterTable');
 export const stashTable = database.table('stashItem');
+export const hexMapTable = database.table('hexMap');
 
 export default database;
