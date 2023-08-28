@@ -57,7 +57,7 @@ export default function Walk () {
         }
     }
 
-    function addHex(x: number, y: number) {
+    function addHex(x: number, y: number, options?: {solid?: boolean}) {
         const existing = getHexAt(x,y);
         if (existing) {
             const tempMap = { ...tileMap }
@@ -65,7 +65,13 @@ export default function Walk () {
             setTileMap(tempMap);
         } else {
             const tile: MapTile = {
-                place: {x,y}
+                place: {x,y},
+                features: [],
+            }
+            if (options) {
+                if (options.solid) {
+                    tile.features!.push("solid");
+                }
             }
             const tmap = {...tileMap};
             tmap.tiles.push(tile);
@@ -106,10 +112,19 @@ export default function Walk () {
         setLowLight(!lowLight);
     }
 
+    function addSolidHex(x:number, y:number): void {
+        const existing = getHexAt(x,y);
+        if (existing) {
+            toggleTileFeature(x,y, "solid");
+        } else {
+            addHex(x,y, { solid: true });
+        }
+    }
+
     function handleClickHexMap(p: Point) {
         const {x,y} = p;
         if (buildCommand === "add") { addHex(x,y); }
-        else if (buildCommand === "solid") { toggleTileFeature(x,y, "solid"); }
+        else if (buildCommand === "solid") { addSolidHex(x,y); }
         else if (buildCommand === "light") { toggleTileFeature(x,y, "light"); }
         else if (buildCommand === "water") { toggleTileFeature(x,y, "water"); }
     }
