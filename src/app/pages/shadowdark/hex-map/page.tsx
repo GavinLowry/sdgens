@@ -59,7 +59,11 @@ export default function Walk () {
 
     function addHex(x: number, y: number) {
         const existing = getHexAt(x,y);
-        if (!existing) {
+        if (existing) {
+            const tempMap = { ...tileMap }
+            tempMap.tiles = tileMap.tiles.filter(t => !(t.place.x===x && t.place.y===y))
+            setTileMap(tempMap);
+        } else {
             const tile: MapTile = {
                 place: {x,y}
             }
@@ -75,7 +79,9 @@ export default function Walk () {
 
     function handleSaveMap () {
         if (tileMap.id) {
-            hexMapTable.put(tileMap);
+            hexMapTable
+            .put(tileMap)
+            .then(() => { updateMapList(); });
             return;
         }
         const savableMap = {
@@ -149,7 +155,7 @@ export default function Walk () {
                 <HexMapView tileMap={tileMap} onClick={handleClickHexMap} lowLight={lowLight} />
                 <div className="walk-controls-column">
                     <div className="walk-build-controls">
-                        <button onClick={() => handleBuildButton("add")} className={buildCommand==="add" ? "active" : ""}>add</button>
+                        <button onClick={() => handleBuildButton("add")} className={buildCommand==="add" ? "active" : ""}>hex</button>
                         <button onClick={() => handleBuildButton("solid")} className={buildCommand==="solid" ? "active" : ""}>solid</button>
                         <button onClick={() => handleBuildButton("light")} className={buildCommand==="light" ? "active" : ""}>light</button>
                         <button onClick={() => handleBuildButton("water")} className={buildCommand==="water" ? "active" : ""}>water</button>
