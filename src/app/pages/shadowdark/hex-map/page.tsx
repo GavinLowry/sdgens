@@ -10,11 +10,12 @@ import FileList, { FileListEntry } from '../components/file-list/file-list';
 import "./hex-map.css";
 
 // TODO:
-// show list of stored hex maps
 // allow map deletion
-// 'sollid' command button should add a hex if clicked where there is no hex
-// 'add' button should delete existing hexes
 // (maybe) create 7-hex 'brush'
+// DONE:
+// show list of stored hex maps
+// 'add' button should delete existing hexes
+// 'sollid' command button should add a hex if clicked where there is no hex
 
 export default function Walk () {
     const [buildCommand, setBuildCommand] = useState<buildCommands | undefined>();

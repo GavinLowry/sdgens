@@ -50,3 +50,11 @@ export function getTileMap(options?: GetTileMapOptions): TileMap {
     }
     return result;
 }
+
+export function getTileAt(place: Point, tileMap: TileMap): MapTile | undefined {
+    return tileMap.tiles.find(t => t.place.x === place.x && t.place.y === place.y);
+}
+
+export function isPassible(tile: MapTile): boolean {
+    return !tile.features?.includes("solid");
+}

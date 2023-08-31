@@ -1,25 +1,42 @@
 'use client'
 
-import { KeyboardEvent, MouseEvent, useEffect, useState } from 'react';
+import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import {Point} from '../utils/mapview';
 import { drawHex, getLitTiles, hatchHex, hexRatio, pointsAreEqual, ringPointsAndAngles, subtractPoints } from "../utils/hex";
-import { TileMap, MapTile } from './hex-map';
+import { TileMap, MapTile, getTileAt, isPassible } from './hex-map';
+import { Mob } from '../utils/hex';
+import Image from 'next/image';
+import MobManager from '../hex-map/mob-manager';
+
 import "./hex-map.css";
 
 interface HexMapViewAttrs {
     tileMap: TileMap;
     onClick(p: Point): void;
-    lowLight: boolean;
+    lowLight?: boolean;
+    mobs?: MobManager;
 }
 
-export default function HexMapView ({tileMap, onClick, lowLight}: HexMapViewAttrs) {
-    const [canvas, setCanvas] = useState<HTMLCanvasElement>();
-    const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
+export default function HexMapView ({tileMap, onClick, lowLight, mobs}: HexMapViewAttrs) {
     const [radius, setRadius] = useState<number>(20);
     const [hoveredCoord, setHoveredCoord] = useState<Point | undefined>();
     const [focus, setFocus] = useState<Point>({x: 0, y: 0});
     const [ctrlDown, setCtrlDown] = useState<boolean>(false);
     const [mouseLast, setMouseLast] = useState<Point | undefined>();
+    
+    const [canvas, _setCanvas] = useState<HTMLCanvasElement>();
+    const canvasRef = useRef(canvas);
+    const setCanvas = (c: HTMLCanvasElement) => {
+        canvasRef.current = c;
+        _setCanvas(c);
+    }
+
+    const [context, _setContext] = useState<CanvasRenderingContext2D>();
+    const contextRef = useRef(context);
+    const setContext = (x: CanvasRenderingContext2D) => {
+        contextRef.current = x;
+        _setContext(x);
+    }
 
     const colors = {
         background: '#333',
@@ -37,8 +54,8 @@ export default function HexMapView ({tileMap, onClick, lowLight}: HexMapViewAttr
         const can = document.getElementById("hex-map-canvas") as HTMLCanvasElement;
         if (can) {
             setCanvas(can);
-            const context = can.getContext('2d');
-            if (context) { setCtx(context); }
+            const ctx = can.getContext('2d');
+            if (ctx) { setContext(ctx); }
         }
 
         document.addEventListener("keydown", handleKeyDown);
@@ -50,15 +67,11 @@ export default function HexMapView ({tileMap, onClick, lowLight}: HexMapViewAttr
 
     useEffect(() => {
         draw();
-    }, [ctx]);
+    }, [context]);
 
     useEffect(() => {
         draw();
     }, [hoveredCoord, lowLight, tileMap, focus]);
-
-    // document.addEventListener("keydown", handleKeyDown);
-
-    // document.addEventListener("keyup", handleKeyUp);
 
     function testRingPoints() {
         const ring1 = ringPointsAndAngles(1);
@@ -70,16 +83,30 @@ export default function HexMapView ({tileMap, onClick, lowLight}: HexMapViewAttr
     }
 
     function draw(): void {
-        if (!ctx || !canvas) { return; }
+        const ctx = contextRef.current;
+        const canvasObject = canvasRef.current;
+        if (!ctx || !canvasObject) { return; }
 
         clearScreen();
 
-        const screenSize = { x: canvas.width, y: canvas.height };
+        const screenSize = { x: canvasObject.width, y: canvasObject.height };
+
+        let lights: Point[] = tileMap.tiles
+        .filter(t => t.features?.includes("light"))
+        .map(t => t.place);
+        if (mobs) {
+            const mobLights = mobs.getMobs()
+            .filter(m => m.light)
+            .map(m => m.place);
+            lights = [
+                ...lights,
+                ...mobLights,
+            ];
+        }
 
         let litTiles: MapTile[] = [];
-        const sources = tileMap.tiles.filter(t => t.features?.includes("light"));
-        for (const source of sources) {
-            const lit = source ? getLitTiles(tileMap, source.place, 6) : [];
+        for (const source of lights) {
+            const lit = source ? getLitTiles(tileMap, source, 6) : [];
             litTiles = [
                 ...litTiles,
                 ...lit
@@ -127,6 +154,20 @@ export default function HexMapView ({tileMap, onClick, lowLight}: HexMapViewAttr
             ctx.fillStyle = colors.lightSource;
             ctx.fill();
         }
+
+        if (mobs) {
+            const mobList = mobs.getMobs();
+            mobList.forEach(m => { drawMob(ctx, m); })
+        }
+    }
+
+    function drawMob(ctx: CanvasRenderingContext2D, mob: Mob) {
+        const canvasObject = canvasRef.current;
+        if (!canvasObject) { return; }
+        const screenSize = { x: canvasObject.width, y: canvasObject.height };
+        const mobScreen = coordToScreen(mob.place, screenSize, focus, radius);
+        const image: CanvasImageSource = document.getElementById(iconNames.MAN) as CanvasImageSource;
+        ctx.drawImage(image, mobScreen.x-radius/2, mobScreen.y-radius/2, radius, radius);
     }
 
     function drawLightSource(ctx: CanvasRenderingContext2D, screenLoc: Point, radius: number): void {
@@ -141,9 +182,11 @@ export default function HexMapView ({tileMap, onClick, lowLight}: HexMapViewAttr
     }
 
     function clearScreen() {
-        if (!ctx || !canvas) { return; }
+        const ctx = contextRef.current;
+        const canvasObject = canvasRef.current;
+        if (!ctx || !canvasObject) { return; }
         ctx.fillStyle = colors.background;
-        ctx.fillRect(0,0, canvas.width, canvas.height);
+        ctx.fillRect(0,0, canvasObject.width, canvasObject.height);
     }
 
     function screenToCoord (screen: Point, focus: Point, hexRadius: number): Point {
@@ -169,9 +212,38 @@ export default function HexMapView ({tileMap, onClick, lowLight}: HexMapViewAttr
         return {x,y};
     }
 
+    function handleNumpad (key: string): void {
+        const mob = mobs?.getSelectedMob();
+        if (!mob || !mobs) { return; }
+        const place = { ...mob.place };
+        switch (key) {
+            case "1": place.x -= 1; place.y += 1; break;
+            case "2": place.y += 2; break;
+            case "3": place.x += 1; place.y += 1; break;
+            case "7": place.x -= 1; place.y -= 1; break;
+            case "8": place.y -= 2; break;
+            case "9": place.x += 1; place.y -= 1; break;
+        }
+        const tile = getTileAt(place, tileMap);
+        if (tile && isPassible(tile)) {
+            mob.place = place;
+            mobs.updateMob(mob);
+            draw();
+        }
+    }
+
     function handleKeyDown(event: any): void {
-        if (event.key === "Control") {
-            setCtrlDown(true);
+        switch (event.key) {
+            case "Control" : setCtrlDown(true); break;
+            case "1":
+            case "2":
+            case "3":
+            case "7":
+            case "8":
+            case "9":
+                handleNumpad(event.key);
+                break;
+            default: console.log({key:event.key});
         }
     }
 
@@ -218,13 +290,22 @@ export default function HexMapView ({tileMap, onClick, lowLight}: HexMapViewAttr
     }
 
     return (
-        <canvas
-            className="walk-view"
-            id="hex-map-canvas"
-            width="600" height="600"
-            onMouseMove={handleMouseMove}
-            onMouseOut={handleMouseOut}
-            onClick={handleClick}
-        ></canvas>
+        <>
+            <canvas
+                className="walk-view"
+                id="hex-map-canvas"
+                width="600" height="600"
+                onMouseMove={handleMouseMove}
+                onMouseOut={handleMouseOut}
+                onClick={handleClick}
+            ></canvas>
+            <div>
+                <Image id={iconNames.MAN} src="/man.svg" alt="man" width={radius} height={radius} />
+            </div>
+        </>
     );
+}
+
+const iconNames = {
+    MAN: "man",
 }

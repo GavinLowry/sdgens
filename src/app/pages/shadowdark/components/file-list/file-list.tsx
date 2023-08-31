@@ -1,13 +1,14 @@
 import './file-list.css';
 
 export interface FileListEntry {
-    name: string;
-    id: string;
+    name?: string;
+    id?: string;
+    [x: string]: string | undefined | unknown;
 }
 
 interface FileListAttrs {
     entries: FileListEntry[];
-    onClick(entry: string): void;
+    onClick(entry?: string): void;
 }
 
 export default function FileList ({entries, onClick}: FileListAttrs) {

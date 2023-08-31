@@ -243,3 +243,26 @@ export function hatchHex(ctx: CanvasRenderingContext2D, center: Point, radius: n
         ctx.lineTo(ur.x, ur.y);
     }
 }
+
+// mobs
+
+export interface Mob {
+    id: string;
+    place: Point;
+    light?: boolean;
+    pc?: boolean;
+    stepsAllowed: number;
+    stepsTaken: number;
+    characterId?: number;
+    aggroLevel?: number;
+}
+
+export function newMob(id: string, place: Point): Mob {
+    const mob: Mob = {
+        id,
+        place: {...place},
+        stepsAllowed: 12,
+        stepsTaken: 0,
+    };
+    return mob;
+}

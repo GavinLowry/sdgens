@@ -41,6 +41,7 @@ const links: LinkEntry[] = [
             { title: "dark maps", href: "/pages/shadowdark/maps" },
             { title: "land maps", href: "/pages/shadowdark/land-maps" },
             { title: "hex map", href: "/pages/shadowdark/hex-map" },
+            { title: "hex walk", href: "/pages/shadowdark/hex-walk"},
         ],
     },
     {
