@@ -23,6 +23,7 @@ export default function Walk () {
     const [lowLight, setLowLight] = useState<boolean>(false);
     const [mapName, setMapName] = useState<string>("");
     const [mapList, setMapList] = useState<TileMap[]>([]);
+    const [hoveredCoord, setHoveredCoord] = useState<Point>();
 	const {selectedProject, setSelectedProject} = useContext(SelectedProject);
     
     useEffect(() => {
@@ -158,6 +159,10 @@ export default function Walk () {
         setMapName('');
     }
 
+    function handleMouseMove(p: Point) {
+        setHoveredCoord(p);
+    }
+
     return (
         <div className="walk">
             { mapList &&
@@ -168,7 +173,7 @@ export default function Walk () {
                 </div>
             }
             <div>
-                <HexMapView tileMap={tileMap} onClick={handleClickHexMap} lowLight={lowLight} />
+                <HexMapView tileMap={tileMap} onClick={handleClickHexMap} onMouseMove={handleMouseMove} lowLight={lowLight} />
                 <div className="walk-controls-column">
                     <div className="walk-build-controls">
                         <button onClick={() => handleBuildButton("add")} className={buildCommand==="add" ? "active" : ""}>hex</button>
@@ -178,6 +183,7 @@ export default function Walk () {
 
                         <button onClick={toggleLowLight} className={lowLight ? "active" : ""}>lowlight</button>
 
+                        { hoveredCoord && <div>{hoveredCoord.x}, {hoveredCoord.y}</div> }
                     </div>
                     <div className="walk-build-controls">
                         <label htmlFor="mapName">map name</label>

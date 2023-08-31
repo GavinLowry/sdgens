@@ -15,14 +15,21 @@ interface HexMapViewAttrs {
     onClick(p: Point): void;
     lowLight?: boolean;
     mobs?: MobManager;
+    onMouseMove?(p: Point): void;
 }
 
-export default function HexMapView ({tileMap, onClick, lowLight, mobs}: HexMapViewAttrs) {
+export default function HexMapView ({tileMap, onClick, lowLight, mobs, onMouseMove}: HexMapViewAttrs) {
     const [radius, setRadius] = useState<number>(20);
     const [hoveredCoord, setHoveredCoord] = useState<Point | undefined>();
-    const [focus, setFocus] = useState<Point>({x: 0, y: 0});
     const [ctrlDown, setCtrlDown] = useState<boolean>(false);
     const [mouseLast, setMouseLast] = useState<Point | undefined>();
+
+    const [focus, _setFocus] = useState<Point>({x: 0, y: 0});
+    const focusRef = useRef(focus);
+    const setFocus = (f: Point) => {
+        focusRef.current = f;
+        _setFocus(f);
+    }
     
     const [canvas, _setCanvas] = useState<HTMLCanvasElement>();
     const canvasRef = useRef(canvas);
@@ -58,11 +65,9 @@ export default function HexMapView ({tileMap, onClick, lowLight, mobs}: HexMapVi
             if (ctx) { setContext(ctx); }
         }
 
-        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keydown", handleKeyDown, false);
 
-        document.addEventListener("keyup", handleKeyUp);
-
-        // testRingPoints();
+        document.addEventListener("keyup", handleKeyUp, false);
     }, []);
 
     useEffect(() => {
@@ -73,14 +78,9 @@ export default function HexMapView ({tileMap, onClick, lowLight, mobs}: HexMapVi
         draw();
     }, [hoveredCoord, lowLight, tileMap, focus]);
 
-    function testRingPoints() {
-        const ring1 = ringPointsAndAngles(1);
-        console.log({ring1});
-        const ring2 = ringPointsAndAngles(2);
-        console.log({ring2});
-        const ring3 = ringPointsAndAngles(3);
-        console.log({ring3});
-    }
+    useEffect(() => {
+        console.log({fy:focus.y})
+    }, [focus])
 
     function draw(): void {
         const ctx = contextRef.current;
@@ -213,19 +213,37 @@ export default function HexMapView ({tileMap, onClick, lowLight, mobs}: HexMapVi
     }
 
     function handleNumpad (key: string): void {
-        const mob = mobs?.getSelectedMob();
-        if (!mob || !mobs) { return; }
+        if (!mobs) { return; }
+        const mob = mobs.getSelectedMob();
+        if (!mob) { return; }
         const place = { ...mob.place };
+        let focusChange: Point = {x:0, y:0};
+
+        const addx = (dir: number) => {
+            place.x += dir;
+            focusChange.x = dir * radius * 1.5;
+        }
+
+        const addy = (dir: number) => {
+            place.y += dir;
+            focusChange.y = dir * radius * hexRatio;
+        }
+
         switch (key) {
-            case "1": place.x -= 1; place.y += 1; break;
-            case "2": place.y += 2; break;
-            case "3": place.x += 1; place.y += 1; break;
-            case "7": place.x -= 1; place.y -= 1; break;
-            case "8": place.y -= 2; break;
-            case "9": place.x += 1; place.y -= 1; break;
+            case "1": addx(-1); addy(1); break;
+            case "2": addy(2); break;
+            case "3": addx(1); addy(1); break;
+            case "7": addx(-1); addy(-1); break;
+            case "8": addy(-2); break;
+            case "9": addx(1); addy(-1); break;
         }
         const tile = getTileAt(place, tileMap);
         if (tile && isPassible(tile)) {
+            const newFocus = {
+                x: focusRef.current.x + focusChange.x,
+                y: focusRef.current.y + focusChange.y
+            };
+            setFocus(newFocus);
             mob.place = place;
             mobs.updateMob(mob);
             draw();
@@ -271,6 +289,9 @@ export default function HexMapView ({tileMap, onClick, lowLight, mobs}: HexMapVi
         } else {
 
             const coord = screenToCoord(mousePoint, focus, radius);
+            if (onMouseMove) {
+                onMouseMove(coord);
+            }
             
             if (!hoveredCoord || coord.x !== hoveredCoord.x || coord.y !== hoveredCoord.y) {
                 setHoveredCoord(coord);
